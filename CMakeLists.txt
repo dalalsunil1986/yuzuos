@@ -1,6 +1,22 @@
 cmake_minimum_required(VERSION 3.16)
 project(YuzuOS C ASM)
 
+set(CMAKE_SYSROOT ${CMAKE_BINARY_DIR}/sysroot)
+set(CMAKE_STAGING_PREFIX ${CMAKE_SYSROOT}/stage)
+
+set(TOOLCHAIN ${CMAKE_BINARY_DIR}/tools/cross/bin/i686-elf)
+set(CMAKE_C_COMPILER ${TOOLCHAIN}-gcc)
+set(CMAKE_ASM_COMPILER ${TOOLCHAIN}-gcc)
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall -Wextra -fno-exceptions -fno-rtti")
+
 add_custom_target(toolchain
   COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
+
+add_subdirectory(kernel)
