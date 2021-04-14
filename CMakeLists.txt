@@ -18,5 +18,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall -Wextra -fno-exceptions -fno-rtti")
 add_custom_target(toolchain
   COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
+  
+add_custom_target(run
+  DEPENDS kernel/kernel
+  COMMAND ${CMAKE_SOURCE_DIR}/tools/run.sh
+  USES_TERMINAL)
 
 add_subdirectory(kernel)
