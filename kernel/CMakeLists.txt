@@ -2,7 +2,9 @@ set(ASM_SOURCES
   boot/boot.S)
 
 set(C_SOURCES
-  init.c)
+  init.c
+  
+  utils/log.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
