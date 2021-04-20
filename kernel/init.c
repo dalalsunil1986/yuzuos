@@ -1,9 +1,10 @@
 #include <kernel/utils/log.h>
+#include <stdbool.h>
 
 void kernel_init()
 {
   log_init();
 
-  while (1)
+  while (true)
     ;
 }
