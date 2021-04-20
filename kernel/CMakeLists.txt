@@ -1,10 +1,14 @@
 set(ASM_SOURCES
-  boot/boot.S)
+  boot/boot.S
+  
+  memory/gdt_flush.S)
 
 set(C_SOURCES
   init.c
   
-  utils/log.c)
+  utils/log.c
+  
+  memory/gdt.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
