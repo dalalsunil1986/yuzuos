@@ -1,3 +1,5 @@
+#!/bin/bash -e
+
 TOOLS_DIR=$(pwd)/tools
 CROSS_DIR=$TOOLS_DIR/cross
 BUILD_DIR=$TOOLS_DIR/build
@@ -8,13 +10,26 @@ PREFIX=$CROSS_DIR
 TARGET=i686-elf
 MIRROR=https://ftp.gnu.org/gnu
 
-BINUTILS_VERSION=2.35.1
+BINUTILS_VERSION=2.36.1
 BINUTILS_PACKAGE=binutils-$BINUTILS_VERSION
 BINUTILS=$BINUTILS_PACKAGE.tar.xz
 
-GCC_VERSION=10.2.0
+GCC_VERSION=11.1.0
 GCC_PACKAGE=gcc-$GCC_VERSION
 GCC=$GCC_PACKAGE.tar.xz
+
+function cleanup {
+  echo "Removing $BUILD_DIR/binutils"
+  rm -rf $BUILD_DIR/binutils
+  echo "Removing $BUILD_DIR/$BINUTILS_PACKAGE"
+  rm -rf $BUILD_DIR/$BINUTILS_PACKAGE
+  echo "Removing $BUILD_DIR/gcc"
+  rm -rf $BUILD_DIR/gcc
+  echo "Removing $BUILD_DIR/$GCC_PACKAGE"
+  rm -rf $BUILD_DIR/$GCC_PACKAGE
+}
+
+trap cleanup EXIT
 
 mkdir -pv $BUILD_DIR $CACHE_DIR $CROSS_DIR
 
