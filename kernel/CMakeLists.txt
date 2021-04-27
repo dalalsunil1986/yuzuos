@@ -11,6 +11,7 @@ set(C_SOURCES
   init.c
   
   utils/log.c
+  utils/stdio.c
   
   memory/gdt.c
   
