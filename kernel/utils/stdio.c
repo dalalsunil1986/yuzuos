@@ -1,6 +1,7 @@
 #include <kernel/utils/stdio.h>
 #include <kernel/utils/compiler.h>
 #include <kernel/utils/ctype.h>
+#include <kernel/system/limits.h>
 
 int vsnprintf_atoi(const char **string)
 {
@@ -387,4 +388,13 @@ int vsnprintf(char *str, size_t size, const char *format, va_list ap)
     *end = '\0';
 
   return buffer - str;
+}
+
+int sprintf(char *str, const char *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+  int len = vsnprintf(str, INT_MAX, format, ap);
+  va_end(ap);
+  return len;
 }

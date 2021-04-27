@@ -12,3 +12,4 @@
 #define VSNPRINTF_LARGE 64
 
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);
+int sprintf(char *str, const char *format, ...);
