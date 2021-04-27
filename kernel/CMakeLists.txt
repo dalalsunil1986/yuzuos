@@ -4,7 +4,8 @@ set(ASM_SOURCES
   memory/gdt_flush.S
   
   interrupts/idt_flush.S
-  interrupts/irq.S)
+  interrupts/irq.S
+  interrupts/isr.S)
 
 set(C_SOURCES
   init.c
@@ -15,7 +16,8 @@ set(C_SOURCES
   
   interrupts/idt.c
   interrupts/pic.c
-  interrupts/irq.c)
+  interrupts/irq.c
+  interrupts/isr.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
