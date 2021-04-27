@@ -25,7 +25,7 @@ void multiboot_init(uint32_t magic, uint32_t addr)
   if (MULTIBOOT_CHECK_FLAG(mbi->flags, 3))
   {
     struct multiboot_mod_list *mod;
-    int i;
+    uint32_t i;
 
     log_info("Multiboot: Mods count = %d, addr = 0x%x\n", (int)mbi->mods_count, (int)mbi->mods_addr);
     for (i = 0, mod = (struct multiboot_mod_list *)mbi->mods_addr; i < mbi->mods_count; i++, mod++)
