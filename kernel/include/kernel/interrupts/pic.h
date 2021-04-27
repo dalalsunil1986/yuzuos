@@ -18,7 +18,10 @@
 #define PIC_READ_IRR 0x0a
 #define PIC_READ_ISR 0x0b
 
+#define PIC_EOI 0x20
+
 void pic_remap(int offset1, int offset2);
+void pic_eoi(uint8_t irq);
 void pic_mask_set(uint8_t irq);
 void pic_mask_unset(uint8_t irq);
 uint16_t pic_irq_get(int ocw3);

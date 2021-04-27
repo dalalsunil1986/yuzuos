@@ -60,6 +60,14 @@ void pic_mask_unset(uint8_t irq)
   outb(port, value);
 }
 
+void pic_eoi(uint8_t irq)
+{
+  if (irq >= 8)
+    outb(PIC2_COMMAND, PIC_EOI);
+
+  outb(PIC1_COMMAND, PIC_EOI);
+}
+
 uint16_t pic_irq_get(int ocw3)
 {
   outb(PIC1_COMMAND, ocw3);
