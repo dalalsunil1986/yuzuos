@@ -18,7 +18,9 @@ set(C_SOURCES
   interrupts/idt.c
   interrupts/pic.c
   interrupts/irq.c
-  interrupts/isr.c)
+  interrupts/isr.c
+  
+  boot/multiboot.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
