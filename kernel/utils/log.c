@@ -31,7 +31,7 @@ void log_log(enum log_type type, const char *file, int line, const char *format,
   va_end(ap);
 
   char buffer[LOG_BUF];
-  len = sprintf(buffer, "\x1B[1m\x1B[34m[Kernel] %s%-5s\x1b[90m %s:%d:\x1B[37m %s\x1b[0m", log_type_color[type], log_type_msg[type], file, line, buffer_format);
+  len = sprintf(buffer, "\x1B[1m\x1B[34m[Kernel] %s%-5s\x1b[90m %s:%d\x1B[37m %s\x1b[0m", log_type_color[type], log_type_msg[type], file, line, buffer_format);
 
   log_write(buffer, len);
 }
