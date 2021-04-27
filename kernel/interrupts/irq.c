@@ -5,7 +5,7 @@
 #include <kernel/utils/log.h>
 #include <stddef.h>
 
-static irq_handler_t irq[IRQ_SIZE * IRQ_DEPTH];
+static itr_handler_t irq[IRQ_SIZE * IRQ_DEPTH];
 
 extern void irq0();
 extern void irq1();
@@ -24,7 +24,7 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-void irq_handler_set(uint8_t index, irq_handler_t handler)
+void irq_handler_set(uint8_t index, itr_handler_t handler)
 {
   sys_cli();
 
@@ -57,7 +57,7 @@ void irq_handler(struct itr_registers *registers)
   {
     for (size_t i = 0; i < IRQ_DEPTH; i++)
     {
-      irq_handler_t handler = irq[i * IRQ_SIZE + (registers->int_no - 32)];
+      itr_handler_t handler = irq[i * IRQ_SIZE + (registers->int_no - 32)];
       if (!handler)
         break;
 

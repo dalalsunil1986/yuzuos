@@ -25,4 +25,4 @@ struct itr_registers
   uint32_t ss;
 };
 
-typedef int (*irq_handler_t)(struct itr_registers *registers);
+typedef int (*itr_handler_t)(struct itr_registers *registers);
