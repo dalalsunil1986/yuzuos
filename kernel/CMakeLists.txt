@@ -12,7 +12,8 @@ set(C_SOURCES
   
   memory/gdt.c
   
-  interrupts/idt.c)
+  interrupts/idt.c
+  interrupts/pic.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
