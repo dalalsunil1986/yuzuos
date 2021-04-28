@@ -189,6 +189,10 @@ struct multiboot_apm_info
   uint16_t dseg_len;
 };
 
+extern void *kernel_start;
+extern void *kernel_end;
+extern struct multiboot_info *multiboot_info;
+
 void multiboot_init(uint32_t magic, uint32_t addr);
 
 #endif
