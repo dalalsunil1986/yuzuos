@@ -15,6 +15,7 @@ set(C_SOURCES
   utils/bitmap.c
   
   memory/gdt.c
+  memory/physical.c
   
   interrupts/idt.c
   interrupts/pic.c
