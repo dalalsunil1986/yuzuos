@@ -12,6 +12,7 @@ set(C_SOURCES
   
   utils/log.c
   utils/stdio.c
+  utils/bitmap.c
   
   memory/gdt.c
   
