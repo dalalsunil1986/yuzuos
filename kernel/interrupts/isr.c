@@ -101,7 +101,7 @@ void isr_handler(struct itr_registers *registers)
   else
   {
     log_error("ISR: Unhandled exception int_no = %d, message = %s\n", registers->int_no, isr_msg[registers->int_no]);
-    sys_stop();
+    sys_panic("ISR: Unhandled exception", registers);
   }
 
   sys_sti();
