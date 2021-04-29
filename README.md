@@ -4,11 +4,11 @@ Unix-like operating system for x86 architecture
 
 ## Screenshot
 
-![Screenshot](https://github.com/yuzuos/yuzuos/blob/master/meta/print-0.png)
+![Screenshot](https://github.com/yuzuos/yuzuos/blob/main/meta/print-0.png)
 
 ## Build and run
 
-See the [Build instructions](https://github.com/yuzuos/yuzuos/blob/master/docs/build.md)
+See the [Build instructions](https://github.com/yuzuos/yuzuos/blob/main/docs/build.md)
 
 ## Author
 
