@@ -1,6 +1,7 @@
 #include <kernel/boot/multiboot.h>
 #include <kernel/utils/log.h>
 #include <kernel/system/sys.h>
+#include <stddef.h>
 
 struct multiboot_info *multiboot_info;
 
@@ -9,7 +10,7 @@ void multiboot_init(uint32_t magic, uint32_t addr)
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC)
   {
     log_error("Multiboot: Invalid magic number = 0x%x\n", (unsigned)magic);
-    sys_stop();
+    sys_panic("Multiboot: Invalid magic number", NULL);
   }
 
   multiboot_info = (struct multiboot_info *)addr;
@@ -17,6 +18,8 @@ void multiboot_init(uint32_t magic, uint32_t addr)
 
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 0))
     log_info("Multiboot: Memory lower = %uKB, upper = %uKB\n", (unsigned)multiboot_info->mem_lower, (unsigned)multiboot_info->mem_upper);
+  else
+    sys_panic("Multiboot: Memory flag not found", NULL);
 
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 1))
     log_info("Multiboot: Boot device = 0x%x\n", (unsigned)multiboot_info->boot_device);
@@ -62,6 +65,8 @@ void multiboot_init(uint32_t magic, uint32_t addr)
       log_info("Multiboot: * Mmap size = 0x%x, base_addr = 0x%x%08x, length = 0x%x%08x, type = 0x%x\n", (unsigned)mmap->size, (unsigned)(mmap->addr >> 32),
                (unsigned)(mmap->addr & 0xffffffff), (unsigned)(mmap->len >> 32), (unsigned)(mmap->len & 0xffffffff), (unsigned)mmap->type);
   }
+  else
+    sys_panic("Multiboot: Memory map flag not found", NULL);
 
   log_info("Multiboot: Initialized\n");
 }
