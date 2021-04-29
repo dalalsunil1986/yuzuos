@@ -29,7 +29,7 @@ uint32_t bitmap_get_first(uint32_t *bitmap, uint32_t frames)
   return BITMAP_BLANK;
 }
 
-int bitmap_get_n_first(uint32_t *bitmap, uint32_t frames, uint32_t len)
+uint32_t bitmap_get_n_first(uint32_t *bitmap, uint32_t frames, uint32_t len)
 {
   if (len == 0)
     return BITMAP_BLANK;
