@@ -2,10 +2,54 @@
 #include <kernel/boot/multiboot.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/bitmap.h>
+#include <stddef.h>
 
 static uint32_t *phys_mm_bitmap;
 static uint32_t phys_mm_bitmap_used;
 static uint32_t phys_mm_bitmap_max;
+
+void *phys_mm_block_n_alloc(uint32_t len)
+{
+  if (phys_mm_bitmap_used - phys_mm_bitmap_max <= 0 || phys_mm_bitmap_max - phys_mm_bitmap_used <= len)
+    return NULL;
+
+  uint32_t bit = bitmap_get_n_first(phys_mm_bitmap, phys_mm_bitmap_max, len);
+  if (bit <= 0)
+    return NULL;
+
+  for (uint32_t i = 0; i < len; i++)
+  {
+    bitmap_set(phys_mm_bitmap, bit + i);
+    phys_mm_bitmap_used++;
+  }
+
+  return (void *)(PHYS_MM_BLOCK * bit);
+}
+
+void *phys_mm_block_alloc()
+{
+  if (phys_mm_bitmap_used - phys_mm_bitmap_max <= 0)
+    return NULL;
+
+  uint32_t bit = bitmap_get_first(phys_mm_bitmap, phys_mm_bitmap_max);
+  if (bit <= 0)
+    return NULL;
+
+  bitmap_set(phys_mm_bitmap, bit);
+  phys_mm_bitmap_used++;
+
+  return (void *)(PHYS_MM_BLOCK * bit);
+}
+
+void phys_mm_block_free(void *block)
+{
+  if (block == NULL)
+    return;
+
+  uint32_t bit = (uint32_t)block / PHYS_MM_BLOCK;
+  bitmap_unset(phys_mm_bitmap, bit);
+  phys_mm_bitmap_used--;
+}
 
 void phys_mm_region_set(uint32_t base, uint32_t len)
 {
