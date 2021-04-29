@@ -22,7 +22,9 @@ set(C_SOURCES
   interrupts/irq.c
   interrupts/isr.c
   
-  boot/multiboot.c)
+  boot/multiboot.c
+  
+  system/sys.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
