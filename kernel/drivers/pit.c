@@ -16,7 +16,7 @@ int pit_handler(struct itr_registers *registers)
 {
   (void)registers;
   pit_ticks++;
-  return IRQ_CONTINUE;
+  return ITR_CONTINUE;
 }
 
 void pit_init()

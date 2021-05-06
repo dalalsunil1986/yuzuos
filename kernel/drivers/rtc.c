@@ -13,7 +13,7 @@ int rtc_handler(struct itr_registers *registers)
   outb(0x70, 0x0C);
   inb(0x71);
 
-  return IRQ_CONTINUE;
+  return ITR_CONTINUE;
 }
 
 void rtc_init()

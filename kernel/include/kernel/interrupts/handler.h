@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+#define ITR_STOP 0
+#define ITR_CONTINUE 1
+
 struct itr_registers
 {
   uint32_t unused;
