@@ -5,6 +5,13 @@
 
 static volatile uint64_t pit_ticks;
 
+void pit_wait(uint32_t ms)
+{
+  uint32_t target_ticks = pit_ticks + ms;
+  while (pit_ticks < target_ticks)
+    ;
+}
+
 int pit_handler(struct itr_registers *registers)
 {
   (void)registers;
