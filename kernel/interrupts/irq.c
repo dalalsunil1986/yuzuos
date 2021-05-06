@@ -65,10 +65,11 @@ void irq_handler(struct itr_registers *registers)
         goto done;
     }
     log_error("IRQ: Unhandled int_no = %d\n", registers->int_no - 32);
-    pic_eoi(registers->int_no - 32);
+    sys_panic("IRQ: Unhandled", registers);
   }
 
 done:
+  pic_eoi(registers->int_no - 32);
   sys_sti();
 }
 
