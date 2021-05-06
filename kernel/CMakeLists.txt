@@ -27,7 +27,9 @@ set(C_SOURCES
   
   boot/multiboot.c
   
-  system/sys.c)
+  system/sys.c
+  
+  drivers/pit.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 

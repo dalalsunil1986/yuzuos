@@ -7,6 +7,7 @@
 #include <kernel/interrupts/isr.h>
 #include <kernel/system/sys.h>
 #include <kernel/boot/multiboot.h>
+#include <kernel/drivers/pit.h>
 #include <stdbool.h>
 
 void kernel_init(uint32_t magic, uint32_t addr)
@@ -19,6 +20,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   multiboot_init(magic, addr);
   phys_mm_init();
   virt_mm_init();
+  pit_init();
 
   sys_sti();
   while (true)
