@@ -13,6 +13,7 @@ set(C_SOURCES
   utils/log.c
   utils/stdio.c
   utils/bitmap.c
+  utils/string.c
   
   memory/gdt.c
   memory/physical.c
