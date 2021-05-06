@@ -29,7 +29,8 @@ set(C_SOURCES
   
   system/sys.c
   
-  drivers/pit.c)
+  drivers/pit.c
+  drivers/rtc.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
