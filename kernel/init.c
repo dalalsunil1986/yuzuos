@@ -1,6 +1,7 @@
 #include <kernel/utils/log.h>
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/physical.h>
+#include <kernel/memory/virtual.h>
 #include <kernel/interrupts/idt.h>
 #include <kernel/interrupts/irq.h>
 #include <kernel/interrupts/isr.h>
@@ -17,6 +18,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   irq_init();
   multiboot_init(magic, addr);
   phys_mm_init();
+  virt_mm_init();
 
   sys_sti();
   while (true)

@@ -2,6 +2,7 @@ set(ASM_SOURCES
   boot/boot.S
   
   memory/gdt_flush.S
+  memory/page_enable.S
   
   interrupts/idt_flush.S
   interrupts/irq.S
@@ -17,6 +18,7 @@ set(C_SOURCES
   
   memory/gdt.c
   memory/physical.c
+  memory/virtual.c
   
   interrupts/idt.c
   interrupts/pic.c
