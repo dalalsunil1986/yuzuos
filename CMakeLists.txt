@@ -18,7 +18,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 add_custom_target(toolchain
   COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
-  
+
+add_custom_target(qemu
+  COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-qemu.sh
+  USES_TERMINAL)
+
 add_custom_target(run
   DEPENDS kernel/kernel
   COMMAND ${CMAKE_SOURCE_DIR}/tools/run.sh
