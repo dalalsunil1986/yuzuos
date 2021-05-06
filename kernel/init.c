@@ -6,6 +6,7 @@
 #include <kernel/interrupts/irq.h>
 #include <kernel/interrupts/isr.h>
 #include <kernel/system/sys.h>
+#include <kernel/system/syscall.h>
 #include <kernel/boot/multiboot.h>
 #include <kernel/drivers/pit.h>
 #include <kernel/drivers/rtc.h>
@@ -23,6 +24,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   virt_mm_init();
   pit_init();
   rtc_init();
+  syscall_init();
 
   sys_sti();
   while (true)

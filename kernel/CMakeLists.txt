@@ -28,6 +28,7 @@ set(C_SOURCES
   boot/multiboot.c
   
   system/sys.c
+  system/syscall.c
   
   drivers/pit.c
   drivers/rtc.c)
