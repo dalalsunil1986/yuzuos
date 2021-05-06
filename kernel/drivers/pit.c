@@ -7,6 +7,7 @@ static volatile uint64_t pit_ticks;
 
 int pit_handler(struct itr_registers *registers)
 {
+  (void)registers;
   pit_ticks++;
   return IRQ_CONTINUE;
 }
