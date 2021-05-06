@@ -7,6 +7,16 @@ static struct page_dir *virt_mm_dir;
 
 extern void page_enable(uint32_t addr);
 
+void virt_mm_frame_set(uint32_t *entry, uint32_t addr)
+{
+  *entry = (*entry & ~PAGE_FRAME) | addr;
+}
+
+void virt_mm_flag_set(uint32_t *entry, uint32_t flags)
+{
+  *entry |= flags;
+}
+
 void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
 {
   struct page_tbl *tbl = (struct page_tbl *)phys_mm_block_alloc();
@@ -15,13 +25,13 @@ void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
   for (uint32_t i = 0, i_phys = physical, i_virt = virtual; i < PAGE_TBL_ENTRIES; i++, i_phys += PHYS_MM_BLOCK, i_virt += PHYS_MM_BLOCK)
   {
     uint32_t *entry = &tbl->entries[PAGE_TBL_INDEX(i_virt)];
-    *entry |= PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE;
-    *entry = (*entry & ~PAGE_FRAME) | i_phys;
+    virt_mm_flag_set(entry, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE);
+    virt_mm_frame_set(entry, i_phys);
   }
 
   uint32_t *entry = &dir->entries[PAGE_DIR_INDEX(virtual)];
-  *entry |= PAGE_DIR_PRESENT | PAGE_DIR_WRITABLE;
-  *entry = (*entry & ~PAGE_FRAME) | (uint32_t)tbl;
+  virt_mm_flag_set(entry, PAGE_DIR_PRESENT | PAGE_DIR_WRITABLE);
+  virt_mm_frame_set(entry, (uint32_t)tbl);
 
   log_info("Virtual MM: Mapped dir = 0x%x, tbl = 0x%x, physical = 0x%x, virtual = 0x%x\n", dir, tbl, physical, virtual);
 }
