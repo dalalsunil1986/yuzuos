@@ -7,6 +7,11 @@ static struct page_dir *virt_mm_dir;
 
 extern void page_enable(uint32_t addr);
 
+struct page_dir *virt_mm_dir_get()
+{
+  return virt_mm_dir;
+}
+
 void virt_mm_frame_set(uint32_t *entry, uint32_t addr)
 {
   *entry = (*entry & ~PAGE_FRAME) | addr;

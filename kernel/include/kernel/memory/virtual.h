@@ -32,4 +32,5 @@ struct page_dir
   uint32_t entries[PAGE_DIR_ENTRIES];
 };
 
+struct page_dir *virt_mm_dir_get();
 void virt_mm_init();
