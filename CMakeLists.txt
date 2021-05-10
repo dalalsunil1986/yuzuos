@@ -5,7 +5,7 @@ set(CMAKE_SYSROOT ${CMAKE_BINARY_DIR}/sysroot)
 set(CMAKE_STAGING_PREFIX ${CMAKE_SYSROOT}/)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SYSROOT}/)
 
-set(TOOLCHAIN ${CMAKE_BINARY_DIR}/tools/cross/bin/i686-elf)
+set(TOOLCHAIN ${CMAKE_BINARY_DIR}/tools/cross/bin/i686-yuzuos)
 set(CMAKE_C_COMPILER ${TOOLCHAIN}-gcc)
 set(CMAKE_ASM_COMPILER ${TOOLCHAIN}-gcc)
 
@@ -21,7 +21,7 @@ function(yuzuos_install_headers)
 endfunction()
 
 add_custom_target(toolchain
-  COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
+  COMMAND ${CMAKE_COMMAND} -E env "SYSROOT_DIR=${CMAKE_SYSROOT}" "SOURCE_DIR=${CMAKE_SOURCE_DIR}" ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
 
 add_custom_target(qemu
