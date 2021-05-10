@@ -2,6 +2,8 @@
 #include <kernel/boot/multiboot.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/bitmap.h>
+#include <kernel/utils/math.h>
+#include <kernel/utils/string.h>
 #include <stddef.h>
 
 static uint32_t *phys_mm_bitmap;
@@ -84,17 +86,20 @@ void phys_mm_region_unset(uint32_t base, uint32_t len)
 void phys_mm_init()
 {
   uint32_t kernel_size = (uint32_t)&kernel_end - (uint32_t)&kernel_start;
-  uint32_t memory_size = multiboot_info->mem_lower + multiboot_info->mem_upper;
   phys_mm_bitmap = (uint32_t *)&kernel_end;
-  phys_mm_bitmap_max = (memory_size * 1024) / PHYS_MM_BLOCK;
+  phys_mm_bitmap_max = DIV_CEIL((multiboot_info->mem_lower + multiboot_info->mem_upper * 1024), PHYS_MM_BLOCK);
   phys_mm_bitmap_used = phys_mm_bitmap_max;
+
+  uint32_t bitmap_size = DIV_CEIL(phys_mm_bitmap_max, PHYS_MM_BLOCK_P_BYTE);
+  memset(phys_mm_bitmap, 0, bitmap_size);
 
   for (struct multiboot_mmap_entry *mmap = (struct multiboot_mmap_entry *)multiboot_info->mmap_addr; (unsigned long)mmap < multiboot_info->mmap_addr + multiboot_info->mmap_length;
        mmap = (struct multiboot_mmap_entry *)((unsigned long)mmap + mmap->size + sizeof(mmap->size)))
     if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
       phys_mm_region_set((uint32_t)mmap->addr, (uint32_t)mmap->len);
 
-  phys_mm_region_unset((uint32_t)&kernel_end, kernel_size);
+  phys_mm_region_unset(0x0, 0x100000);
+  phys_mm_region_unset(0x100000, kernel_size + bitmap_size);
 
   log_info("Physical MM: Kernel start = 0x%x, end = 0x%x, size = 0x%x\n", &kernel_start, &kernel_end, kernel_size);
   log_info("Physical MM: Bitmap addr = 0x%x, max = %d, used = %d\n", phys_mm_bitmap, phys_mm_bitmap_max, phys_mm_bitmap_used);
