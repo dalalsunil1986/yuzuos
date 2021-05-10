@@ -20,6 +20,11 @@ function(yuzuos_install_headers)
   install(DIRECTORY include DESTINATION usr)
 endfunction()
 
+function(yuzuos_bin bin_name)
+  add_executable(${bin_name} ${SOURCES})
+  install(TARGETS ${bin_name} RUNTIME DESTINATION bin)
+endfunction()
+
 add_custom_target(toolchain
   COMMAND ${CMAKE_COMMAND} -E env "SYSROOT_DIR=${CMAKE_SYSROOT}" "SOURCE_DIR=${CMAKE_SOURCE_DIR}" ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
