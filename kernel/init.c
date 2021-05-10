@@ -12,6 +12,7 @@
 #include <kernel/drivers/rtc.h>
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/mouse.h>
+#include <kernel/drivers/vga.h>
 #include <stdbool.h>
 
 void kernel_init(uint32_t magic, uint32_t addr)
@@ -28,6 +29,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   rtc_init();
   keyboard_init();
   mouse_init();
+  vga_init();
   syscall_init();
 
   sys_sti();
