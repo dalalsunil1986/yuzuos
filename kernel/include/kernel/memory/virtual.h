@@ -16,6 +16,8 @@
 #define PAGE_DIR_INDEX(addr) (((addr) >> 22) & 0x3ff)
 #define PAGE_DIR_BASE 0xFFFFF000
 
+#define HEAP_BOTTOM 0xD0000000
+
 enum page_tbl_flags
 {
   PAGE_TBL_PRESENT = 1,
