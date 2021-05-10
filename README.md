@@ -4,7 +4,7 @@ Unix-like operating system for x86 architecture
 
 ## Screenshot
 
-![Screenshot](https://github.com/yuzuos/yuzuos/blob/main/meta/print-0.png)
+![Screenshot](https://github.com/yuzuos/yuzuos/blob/main/meta/print-1.png?raw=true)
 
 ## Libraries
 
