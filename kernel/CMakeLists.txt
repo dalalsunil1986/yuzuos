@@ -31,7 +31,8 @@ set(C_SOURCES
   system/syscall.c
   
   drivers/pit.c
-  drivers/rtc.c)
+  drivers/rtc.c
+  drivers/keyboard.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
