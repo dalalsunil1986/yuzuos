@@ -44,6 +44,9 @@ void virt_mm_init()
   virt_mm_map(dir, 0x0, 0x0);
   virt_mm_map(dir, 0x100000, 0xC0000000);
 
+  dir->entries[PAGE_DIR_ENTRIES - 1] = ((uint32_t)dir & PAGE_DIR_BASE) | PAGE_DIR_PRESENT | PAGE_DIR_WRITABLE;
+  log_info("Virtual MM: Recursive page directory enabled\n");
+
   virt_mm_dir = dir;
   page_enable((uint32_t)dir);
   log_info("Virtual MM: Page enabled, dir = 0x%x\n", (uint32_t)dir);
