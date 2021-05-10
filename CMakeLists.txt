@@ -47,3 +47,4 @@ include_directories(libs/c/include)
 
 add_subdirectory(kernel)
 add_subdirectory(libs)
+add_subdirectory(services)
