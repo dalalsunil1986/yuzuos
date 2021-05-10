@@ -6,6 +6,10 @@ Unix-like operating system for x86 architecture
 
 ![Screenshot](https://github.com/yuzuos/yuzuos/blob/main/meta/print-0.png)
 
+## Libraries
+
+* C standard library (libc)
+
 ## Build and run
 
 See the [Build instructions](https://github.com/yuzuos/yuzuos/blob/main/docs/build.md)
