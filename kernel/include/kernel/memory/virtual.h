@@ -10,9 +10,11 @@
 
 #define PAGE_TBL_ENTRIES 1024
 #define PAGE_TBL_INDEX(addr) (((addr) >> 12) & 0x3ff)
+#define PAGE_TBL_BASE 0xFFC00000
 
 #define PAGE_DIR_ENTRIES 1024
 #define PAGE_DIR_INDEX(addr) (((addr) >> 22) & 0x3ff)
+#define PAGE_DIR_BASE 0xFFFFF000
 
 enum page_tbl_flags
 {
@@ -37,4 +39,5 @@ struct page_dir
 };
 
 struct page_dir *virt_mm_dir_get();
+void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual, uint32_t flags);
 void virt_mm_init();
