@@ -28,8 +28,13 @@ add_custom_target(qemu
   COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-qemu.sh
   USES_TERMINAL)
 
+add_custom_target(image
+  COMMAND ${CMAKE_COMMAND} -E env "SOURCE_DIR=${CMAKE_SOURCE_DIR}" ${CMAKE_SOURCE_DIR}/tools/setup-image.sh
+  BYPRODUCTS ${CMAKE_BINARY_DIR}/qemu_img
+  USES_TERMINAL)
+
 add_custom_target(run
-  DEPENDS kernel/kernel
+  DEPENDS qemu_img,kernel/kernel
   COMMAND ${CMAKE_SOURCE_DIR}/tools/run.sh
   USES_TERMINAL)
 
