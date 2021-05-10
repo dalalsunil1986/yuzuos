@@ -5,6 +5,7 @@
 static struct page_dir *virt_mm_dir;
 
 extern void page_enable(uint32_t addr);
+extern void tbl_flush_entry(uint32_t addr);
 
 struct page_dir *virt_mm_dir_get()
 {
