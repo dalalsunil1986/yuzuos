@@ -29,14 +29,18 @@ void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual,
 
   if (!PAGE_IS_ENABLED(dir->entries[PAGE_DIR_INDEX(virtual)]))
   {
-    uint32_t physical = (uint32_t)phys_mm_block_alloc();
-    dir->entries[PAGE_DIR_INDEX(virtual)] = physical | flags;
+    uint32_t physical_tbl = (uint32_t)phys_mm_block_alloc();
+    uint32_t *entry = &dir->entries[PAGE_DIR_INDEX(virtual)];
+    virt_mm_flag_set(entry, flags);
+    virt_mm_frame_set(entry, physical_tbl);
     tbl_flush_entry(virtual);
     memset((char *)PAGE_TBL_BASE + PAGE_DIR_INDEX(virtual) * PHYS_MM_BLOCK, 0, sizeof(struct page_tbl));
   }
 
   uint32_t *table = (uint32_t *)((char *)PAGE_TBL_BASE + PAGE_DIR_INDEX(virtual) * PHYS_MM_BLOCK);
-  table[PAGE_TBL_INDEX(virtual)] = physical | flags;
+  uint32_t *entry = &table[PAGE_TBL_INDEX(virtual)];
+  virt_mm_flag_set(entry, flags);
+  virt_mm_frame_set(entry, physical);
   tbl_flush_entry(virtual);
 }
 
