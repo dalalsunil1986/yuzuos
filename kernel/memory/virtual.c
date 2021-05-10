@@ -1,5 +1,4 @@
 #include <kernel/memory/virtual.h>
-#include <kernel/memory/physical.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
 
