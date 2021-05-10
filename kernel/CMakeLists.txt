@@ -36,7 +36,8 @@ set(C_SOURCES
   drivers/rtc.c
   drivers/keyboard.c
   drivers/mouse.c
-  drivers/vga.c)
+  drivers/vga.c
+  drivers/pci.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 

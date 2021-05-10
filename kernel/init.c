@@ -13,6 +13,7 @@
 #include <kernel/drivers/keyboard.h>
 #include <kernel/drivers/mouse.h>
 #include <kernel/drivers/vga.h>
+#include <kernel/drivers/pci.h>
 #include <stdbool.h>
 
 void kernel_init(uint32_t magic, uint32_t addr)
@@ -30,6 +31,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   keyboard_init();
   mouse_init();
   vga_init();
+  pci_init();
   syscall_init();
 
   sys_sti();
