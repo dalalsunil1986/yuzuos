@@ -16,6 +16,10 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
+function(yuzuos_install_headers)
+  install(DIRECTORY include DESTINATION usr)
+endfunction()
+
 add_custom_target(toolchain
   COMMAND ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
