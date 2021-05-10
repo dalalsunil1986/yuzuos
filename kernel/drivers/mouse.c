@@ -13,6 +13,7 @@ void mouse_write(uint8_t write)
 
 int mouse_handler(struct itr_registers *registers)
 {
+  (void)registers;
   uint8_t status = inb(0x64);
 
   while ((status & 0x01) && (status & 0x20))
