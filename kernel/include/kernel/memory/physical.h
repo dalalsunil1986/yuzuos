@@ -9,3 +9,4 @@ void phys_mm_init();
 void *phys_mm_block_alloc();
 void *phys_mm_block_n_alloc(uint32_t len);
 void phys_mm_block_free(void *block);
+void phys_mm_addr_set(uint32_t addr);

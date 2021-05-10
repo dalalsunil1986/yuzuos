@@ -10,6 +10,16 @@ static uint32_t *phys_mm_bitmap;
 static uint32_t phys_mm_bitmap_used;
 static uint32_t phys_mm_bitmap_max;
 
+void phys_mm_addr_set(uint32_t addr)
+{
+  uint32_t frame = addr / PHYS_MM_BLOCK;
+  if (!bitmap_test(phys_mm_bitmap, frame))
+  {
+    bitmap_set(phys_mm_bitmap, frame);
+    phys_mm_bitmap_used++;
+  }
+}
+
 void *phys_mm_block_n_alloc(uint32_t len)
 {
   if (phys_mm_bitmap_used - phys_mm_bitmap_max <= 0 || phys_mm_bitmap_max - phys_mm_bitmap_used <= len)
