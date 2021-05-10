@@ -17,9 +17,10 @@ void malloc_assert(struct malloc_block *block)
 
 struct malloc_block *malloc_get(struct malloc_block *last, size_t size)
 {
+  struct malloc_block *block;
   size_t increment = size + sizeof(struct malloc_block);
   if (increment == 0)
-    return (char *)malloc_current;
+    block = (struct malloc_block *)malloc_current;
 
   char *base = (char *)malloc_current;
 
@@ -36,7 +37,7 @@ struct malloc_block *malloc_get(struct malloc_block *last, size_t size)
 
   malloc_current += increment;
   memset(base, 0, increment);
-  struct malloc_block *block = base;
+  block = (struct malloc_block *)base;
 
   if (last)
     last->next = block;
