@@ -7,3 +7,11 @@ void *memset(void *str, int c, size_t n)
     p_str[i] = (unsigned char)c;
   return str;
 }
+
+size_t strlen(const char *str)
+{
+  size_t len = 0;
+  while (str[len])
+    len++;
+  return len;
+}
