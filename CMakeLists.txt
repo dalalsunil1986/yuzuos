@@ -33,4 +33,7 @@ add_custom_target(run
   COMMAND ${CMAKE_SOURCE_DIR}/tools/run.sh
   USES_TERMINAL)
 
+include_directories(libs/c/include)
+
 add_subdirectory(kernel)
+add_subdirectory(libs)
