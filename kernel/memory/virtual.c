@@ -50,6 +50,7 @@ void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
     uint32_t *entry = &tbl->entries[PAGE_TBL_INDEX(i_virt)];
     virt_mm_flag_set(entry, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE);
     virt_mm_frame_set(entry, i_phys);
+    phys_mm_addr_set(i_phys);
   }
 
   uint32_t *entry = &dir->entries[PAGE_DIR_INDEX(virtual)];
