@@ -11,6 +11,7 @@
 #include <kernel/drivers/pit.h>
 #include <kernel/drivers/rtc.h>
 #include <kernel/drivers/keyboard.h>
+#include <kernel/drivers/mouse.h>
 #include <stdbool.h>
 
 void kernel_init(uint32_t magic, uint32_t addr)
@@ -26,6 +27,7 @@ void kernel_init(uint32_t magic, uint32_t addr)
   pit_init();
   rtc_init();
   keyboard_init();
+  mouse_init();
   syscall_init();
 
   sys_sti();
