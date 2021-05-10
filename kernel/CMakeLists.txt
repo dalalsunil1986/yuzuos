@@ -3,6 +3,7 @@ set(ASM_SOURCES
   
   memory/gdt_flush.S
   memory/page_enable.S
+  memory/tbl_flush_entry.S
   
   interrupts/idt_flush.S
   interrupts/irq.S
