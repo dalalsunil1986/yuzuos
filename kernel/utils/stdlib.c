@@ -48,6 +48,30 @@ struct malloc_block *malloc_get(struct malloc_block *last, size_t size)
   return block;
 }
 
+void *malloc_align(size_t size)
+{
+  uint32_t addr = malloc_current;
+  if (addr % size == 0)
+    return NULL;
+
+  uint32_t padding = DIV_CEIL(addr, size) * size - addr;
+  uint32_t required = sizeof(struct malloc_block) * 2;
+
+  while (padding <= HEAP_TOP)
+  {
+    if (padding > required)
+    {
+      struct malloc_block *last = malloc_blocks;
+      while (!last->next)
+        last = last->next;
+      struct malloc_block *block = malloc_get(last, padding - required);
+      return block + 1;
+    }
+    padding += size;
+  }
+  return NULL;
+}
+
 void *malloc(size_t size)
 {
   if (size <= 0)

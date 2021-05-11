@@ -14,5 +14,6 @@ struct malloc_block
 };
 
 void *malloc(size_t size);
+void *malloc_align(size_t size);
 void *calloc(size_t nitems, size_t size);
 void free(void *ptr);
