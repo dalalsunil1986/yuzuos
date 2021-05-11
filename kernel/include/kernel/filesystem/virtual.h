@@ -8,8 +8,19 @@
 
 struct vfs_inode
 {
+  void *info;
+  uint32_t blksize;
   uint32_t blocks;
   uint32_t size;
+  uint32_t flags;
+  ino_t ino;
+  umode_t mode;
+  gid_t gid;
+  uid_t uid;
+  nlink_t nlink;
+  time_t atime;
+  time_t ctime;
+  time_t mtime;
   struct vfs_sb *sb;
 };
 
