@@ -37,3 +37,22 @@ char *strdup(const char *s)
 
   return (char *)memcpy(s_new, s, len);
 }
+
+int strcmp(const char *str1, const char *str2)
+{
+  const uint8_t *p_str1 = (const uint8_t *)str1;
+  const uint8_t *p_str2 = (const uint8_t *)str2;
+  uint8_t ch1;
+  uint8_t ch2;
+
+  do
+  {
+    ch1 = (uint8_t)*p_str1++;
+    ch2 = (uint8_t)*p_str2++;
+
+    if (ch1 == '\0')
+      return ch1 - ch2;
+  } while (ch1 == ch2);
+
+  return ch1 - ch2;
+}
