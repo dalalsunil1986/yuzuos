@@ -5,6 +5,7 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/string.h>
+#include <kernel/utils/errno.h>
 
 static struct dlist_head ide_ata_list;
 
@@ -14,6 +15,44 @@ void ide_ata_delay_400ns(uint16_t addr)
   inb(addr + 7);
   inb(addr + 7);
   inb(addr + 7);
+}
+
+uint8_t ide_ata_polling(struct ata_device *device)
+{
+  while (true)
+  {
+    uint8_t status = inb(device->base_io + 7);
+    if (!(status & ATA_REG_BUSY) || (status & ATA_REG_DRQ))
+      return IDE_POLLING_SUCCESS;
+    if ((status & ATA_REG_ERROR) || (status & ATA_REG_DF))
+      return IDE_POLLING_ERROR;
+  }
+}
+
+int8_t ide_ata_read(struct ata_device *device, uint16_t *buffer, uint32_t lba, uint8_t sectors)
+{
+  outb(device->base_io + 6, (device->master ? 0xE0 : 0xF0) | ((lba >> 24) & 0x0F));
+  ide_ata_delay_400ns(device->base_io);
+
+  outb(device->base_io + 1, 0x00);
+  outb(device->base_io + 2, sectors);
+  outb(device->base_io + 3, (uint8_t)lba);
+  outb(device->base_io + 4, (uint8_t)(lba >> 8));
+  outb(device->base_io + 5, (uint8_t)(lba >> 16));
+  outb(device->base_io + 7, 0x20);
+
+  if (ide_ata_polling(device) == IDE_POLLING_ERROR)
+    return -ENXIO;
+
+  for (int i = 0; i < sectors; ++i)
+  {
+    insw(device->base_io, buffer + i * 256, 256);
+    ide_ata_delay_400ns(device->base_io);
+
+    if (ide_ata_polling(device) == IDE_POLLING_ERROR)
+      return -ENXIO;
+  }
+  return 0;
 }
 
 uint8_t ide_ata_identify_polling(struct ata_device *device)

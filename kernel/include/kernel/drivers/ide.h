@@ -17,6 +17,9 @@
 #define IDE_IDENTIFY_SUCCESS 1
 #define IDE_IDENTIFY_NOT_FOUND 2
 
+#define IDE_POLLING_ERROR 0
+#define IDE_POLLING_SUCCESS 1
+
 #define IDE_BUF 256
 
 enum ata_type
@@ -40,3 +43,4 @@ struct ata_device
 
 void ide_init();
 struct ata_device *ide_ata_get(const char *name);
+int8_t ide_ata_read(struct ata_device *device, uint16_t *buffer, uint32_t lba, uint8_t sectors);
