@@ -28,8 +28,6 @@ int mouse_handler(struct itr_registers *registers)
 
 void mouse_init()
 {
-  sys_cli();
-
   while ((inb(0x64) & 1))
     inb(0x60);
 
@@ -49,8 +47,6 @@ void mouse_init()
   inb(0x60);
 
   irq_handler_set(12, mouse_handler);
-
-  sys_sti();
 
   log_info("Mouse: Initialized\n");
 }
