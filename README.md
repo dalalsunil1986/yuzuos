@@ -2,7 +2,7 @@
 
 Unix-like operating system for x86 architecture
 
-![Github actions](https://github.com/yuzuos/yuzuos/actions/workflows/cmake.yml/badge.svg)
+[![CMake](https://github.com/yuzuos/yuzuos/actions/workflows/cmake.yml/badge.svg)](https://github.com/yuzuos/yuzuos/actions/workflows/cmake.yml)
 
 ## Screenshot
 
