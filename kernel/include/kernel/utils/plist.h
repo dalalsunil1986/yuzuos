@@ -34,8 +34,8 @@ struct plist_node
 #define plist_foreach_entry(pos, head, mem) dlist_foreach_entry(pos, &(head)->node_list, mem.node_list)
 #define plist_foreach_entry_continue(pos, head, m) dlist_foreach_entry_continue(pos, &(head)->node_list, m.node_list)
 #define plist_foreach_entry_safe(pos, n, head, m) dlist_foreach_entry_safe(pos, n, &(head)->node_list, m.node_list)
-#define plist_first_entry(head, type, member) dlist_container(plist_first(head), type, member)
-#define plist_last_entry(head, type, member) dlist_container(plist_last(head), type, member)
+#define plist_entry_first(head, type, member) dlist_container(plist_first(head), type, member)
+#define plist_entry_last(head, type, member) dlist_container(plist_last(head), type, member)
 #define plist_next(pos) dlist_entry_next(pos, node_list)
 #define plist_prev(pos) dlist_entry_prev(pos, node_list)
 
