@@ -18,6 +18,7 @@ set(C_SOURCES
   utils/string.c
   utils/stdlib.c
   utils/dlist.c
+  utils/plist.c
   
   memory/gdt.c
   memory/physical.c
