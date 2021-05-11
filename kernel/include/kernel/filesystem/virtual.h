@@ -1,7 +1,10 @@
 #pragma once
 
 #include <kernel/utils/dlist.h>
+#include <kernel/utils/types.h>
 #include <stdint.h>
+
+#define VFS_BYTES_P_SECTOR 512
 
 struct vfs_sb
 {
@@ -30,3 +33,4 @@ struct vfs_type
 
 void virt_fs_init();
 void virt_fs_type_add(struct vfs_type *type);
+char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size);

@@ -1,11 +1,31 @@
 #include <kernel/filesystem/virtual.h>
 #include <kernel/filesystem/ext2.h>
+#include <kernel/drivers/ide.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
+#include <kernel/utils/stdlib.h>
+#include <kernel/utils/math.h>
 #include <stddef.h>
 
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
+
+char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
+{
+  // FIXME better error handling
+  struct ata_device *device = ide_ata_get(devname);
+  if (!device)
+    return NULL;
+
+  char *buffer = calloc(DIV_CEIL(size, VFS_BYTES_P_SECTOR) * VFS_BYTES_P_SECTOR, sizeof(char));
+  if (!buffer)
+    return NULL;
+
+  if (ide_ata_read(device, (uint16_t *)buffer, sector, DIV_CEIL(size, VFS_BYTES_P_SECTOR)) < 0)
+    return NULL;
+
+  return buffer;
+}
 
 void virt_fs_type_add(struct vfs_type *type)
 {
