@@ -48,7 +48,7 @@ struct ext2_inode *ext2_fs_inode_get(struct vfs_sb *sb, ino_t ino)
 
 struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb)
 {
-  struct vfs_inode *inode = virt_fs_inode_init();
+  struct vfs_inode *inode = virt_fs_inode_alloc();
   inode->sb = sb;
   return inode;
 }

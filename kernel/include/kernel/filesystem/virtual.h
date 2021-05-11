@@ -52,4 +52,4 @@ struct vfs_type
 void virt_fs_init();
 void virt_fs_type_add(struct vfs_type *type);
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size);
-struct vfs_inode *virt_fs_inode_init();
+struct vfs_inode *virt_fs_inode_alloc();

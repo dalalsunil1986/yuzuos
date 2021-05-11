@@ -10,7 +10,7 @@
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
 
-struct vfs_inode *virt_fs_inode_init()
+struct vfs_inode *virt_fs_inode_alloc()
 {
   struct vfs_inode *inode = calloc(1, sizeof(struct vfs_inode));
   inode->blocks = 0;
