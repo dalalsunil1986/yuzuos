@@ -4,6 +4,7 @@
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
+#include <kernel/utils/string.h>
 
 static struct dlist_head ide_ata_list;
 
@@ -91,6 +92,17 @@ int ide_handler(struct itr_registers *registers)
 {
   (void)registers;
   return ITR_CONTINUE;
+}
+
+struct ata_device *ide_ata_get(const char *name)
+{
+  struct ata_device *entry;
+  dlist_foreach_entry(entry, &ide_ata_list, list)
+  {
+    if (!strcmp(entry->name, name))
+      return entry;
+  }
+  return NULL;
 }
 
 void ide_init()

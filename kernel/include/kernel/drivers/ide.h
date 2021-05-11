@@ -39,3 +39,4 @@ struct ata_device
 };
 
 void ide_init();
+struct ata_device *ide_ata_get(const char *name);
