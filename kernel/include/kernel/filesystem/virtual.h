@@ -6,6 +6,7 @@
 struct vfs_sb
 {
   const char *devname;
+  const void *info;
 
   uint32_t blocksize;
   uint32_t blocksize_bits;
