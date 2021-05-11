@@ -1,0 +1,41 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      
+    - name: Toolchain cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}/build/tools/cache/toolchain_github_actions.tar.gz
+        key: ${{ runner.os }}-toolchain-i686-${{ hashFiles('libs/c/include/**/*.h', 'tools/patches/*.patch', 'tools/setup-toolchain.sh') }}
+        
+    - name: Toolchain generate/restore
+      env:
+        TOOLCHAIN_CACHE: yes
+      run: |
+        git config --global user.name "Github actions"
+        git config --global user.email "actions@github.com"
+        cmake --build ${{github.workspace}}/build --target toolchain
+        
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}}
