@@ -5,10 +5,24 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/math.h>
+#include <kernel/utils/string.h>
 #include <stddef.h>
 
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
+
+struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *parent)
+{
+  struct vfs_dentry *dentry = calloc(1, sizeof(struct vfs_dentry));
+  dentry->name = strdup(name);
+  dentry->parent = parent;
+  dlist_head_init(&dentry->list);
+
+  if (parent)
+    dentry->sb = parent->sb;
+
+  return dentry;
+}
 
 struct vfs_inode *virt_fs_inode_alloc()
 {

@@ -6,6 +6,15 @@
 
 #define VFS_BYTES_P_SECTOR 512
 
+struct vfs_dentry
+{
+  const char *name;
+  struct vfs_sb *sb;
+  struct vfs_inode *inode;
+  struct vfs_dentry *parent;
+  struct dlist_head list;
+};
+
 struct vfs_inode
 {
   void *info;
@@ -33,12 +42,15 @@ struct vfs_sb
   uint32_t blocksize_bits;
   uint32_t magic;
 
+  struct vfs_dentry *root;
   struct vfs_type *type;
 };
 
 struct vfs_mount
 {
   struct vfs_sb *sb;
+  struct vfs_dentry *root;
+  struct vfs_dentry *mount;
   struct dlist_head list;
 };
 
@@ -53,3 +65,4 @@ void virt_fs_init();
 void virt_fs_type_add(struct vfs_type *type);
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size);
 struct vfs_inode *virt_fs_inode_alloc();
+struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *parent);
