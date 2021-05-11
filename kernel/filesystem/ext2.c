@@ -85,8 +85,6 @@ void ext2_fs_inode_read(struct vfs_inode *inode)
 
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type)
 {
-  (void)path;
-
   struct vfs_sb *vfs_sb = calloc(1, sizeof(struct vfs_sb));
   vfs_sb->devname = strdup(name);
   vfs_sb->blocksize = EXT2_MIN_BLOCK_SIZE;
@@ -108,8 +106,16 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   inode->ino = EXT2_ROOT_INO;
   ext2_fs_inode_read(inode);
 
+  struct vfs_dentry *dentry = virt_fs_dentry_alloc(path, NULL);
+  dentry->sb = vfs_sb;
+  dentry->inode = inode;
+  vfs_sb->root = dentry;
+
   struct vfs_mount *mount = calloc(1, sizeof(struct vfs_mount));
   mount->sb = vfs_sb;
+  mount->root = dentry;
+  mount->mount = dentry;
+
   return mount;
 }
 
