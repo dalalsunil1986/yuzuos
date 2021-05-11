@@ -75,26 +75,16 @@ extern void isr127();
 
 void isr_handler_set(uint8_t index, itr_handler_t handler)
 {
-  sys_cli();
-
   isr[index] = handler;
-
-  sys_sti();
 }
 
 void isr_handler_unset(uint8_t index)
 {
-  sys_cli();
-
   isr[index] = NULL;
-
-  sys_sti();
 }
 
 void isr_handler(struct itr_registers *registers)
 {
-  sys_cli();
-
   itr_handler_t handler = isr[registers->int_no];
   if (handler)
     handler(registers);
@@ -103,8 +93,6 @@ void isr_handler(struct itr_registers *registers)
     log_error("ISR: Unhandled exception int_no = %d, message = %s\n", registers->int_no, isr_msg[registers->int_no]);
     sys_panic("ISR: Unhandled exception", registers);
   }
-
-  sys_sti();
 }
 
 void isr_init()
