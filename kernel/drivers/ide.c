@@ -5,6 +5,8 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 
+static struct dlist_head ide_ata_list;
+
 void ide_ata_delay_400ns(uint16_t addr)
 {
   inb(addr + 7);
@@ -77,6 +79,8 @@ struct ata_device *ide_detect(char *name, bool master, uint8_t irq, uint16_t bas
   {
     device->type = ATA_TYPE;
     device->name = name;
+
+    dlist_add_tail(&device->list, &ide_ata_list);
     log_info("IDE: Identified type = ATA, name = %s, base_io = 0x%x, ctrl_io = 0x%x, irq = %d\n", name, base_io, ctrl_io, irq);
     return device;
   }
@@ -91,6 +95,8 @@ int ide_handler(struct itr_registers *registers)
 
 void ide_init()
 {
+  dlist_head_init(&ide_ata_list);
+
   irq_handler_set(ATA0_IRQ, ide_handler);
 
   if (ide_detect("/dev/hda", true, ATA0_IRQ, ATA0_BASE_ADDR, ATA0_CTRL_ADDR) == NULL)

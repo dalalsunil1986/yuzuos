@@ -1,5 +1,6 @@
 #pragma once
 
+#include <kernel/utils/dlist.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -34,6 +35,7 @@ struct ata_device
   uint8_t irq;
 
   enum ata_type type;
+  struct dlist_head list;
 };
 
 void ide_init();
