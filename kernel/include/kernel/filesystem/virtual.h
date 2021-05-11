@@ -1,9 +1,22 @@
 #pragma once
 
 #include <kernel/utils/dlist.h>
+#include <stdint.h>
+
+struct vfs_sb
+{
+  const char *devname;
+
+  uint32_t blocksize;
+  uint32_t blocksize_bits;
+  uint32_t magic;
+
+  struct vfs_type *type;
+};
 
 struct vfs_mount
 {
+  struct vfs_sb *sb;
   struct dlist_head list;
 };
 
