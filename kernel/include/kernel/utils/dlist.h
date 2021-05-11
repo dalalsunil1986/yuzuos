@@ -67,6 +67,7 @@ struct dlist_head
   for (pos = dlist_entry_last(head, typeof(*pos), member), n = dlist_entry_prev(pos, member); \
        !dlist_entry_is_head(pos, head, member); pos = n, n = dlist_entry_prev(n, member))
 
+void dlist_head_init(struct dlist_head *list);
 void dlist_add(struct dlist_head *new, struct dlist_head *head);
 void dlist_add_tail(struct dlist_head *new, struct dlist_head *head);
 void dlist_remove(struct dlist_head *entry);
