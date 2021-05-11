@@ -3,6 +3,13 @@
 #include <kernel/filesystem/virtual.h>
 
 #define EXT2_SUPER_MAGIC 0xEF53
+
+#define EXT2_BAD_INO 1
+#define EXT2_ROOT_INO 2
+#define EXT2_BOOT_LOADER_INO 5
+#define EXT2_UNDEL_DIR_INO 6
+#define EXT2_STARTING_INO 1
+
 #define EXT2_MIN_BLOCK_SIZE 1024
 
 #define EXT2_BLOCK_SIZE(sb) (EXT2_MIN_BLOCK_SIZE << sb->s_log_block_size)

@@ -21,6 +21,14 @@ char *ext2_fs_bread_block(struct vfs_sb *sb, uint32_t block)
   return ext2_fs_bread(sb, block, sb->blocksize);
 }
 
+
+struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb)
+{
+  struct vfs_inode *inode = virt_fs_inode_init();
+  inode->sb = sb;
+  return inode;
+}
+
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type)
 {
   (void)path;
@@ -41,6 +49,9 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   vfs_sb->magic = ext2_sb->s_magic;
   vfs_sb->blocksize = EXT2_BLOCK_SIZE(ext2_sb);
   vfs_sb->blocksize_bits = ext2_sb->s_log_block_size;
+
+  struct vfs_inode *inode = ext2_fs_inode_alloc(vfs_sb);
+  inode->ino = EXT2_ROOT_INO;
 
   struct vfs_mount *mount = calloc(1, sizeof(struct vfs_mount));
   mount->sb = vfs_sb;
