@@ -22,6 +22,12 @@ void virt_mm_flag_set(uint32_t *entry, uint32_t flags)
   *entry |= flags;
 }
 
+uint32_t virt_mm_phys_addr_get(uint32_t virtual)
+{
+  uint32_t *tbl = (uint32_t *)((char *)PAGE_TBL_BASE + PAGE_DIR_INDEX(virtual) * PHYS_MM_BLOCK);
+  return tbl[PAGE_TBL_INDEX(virtual)];
+}
+
 void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual, uint32_t flags)
 {
   if (virtual != PAGE_ALIGN(virtual))
