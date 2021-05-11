@@ -28,9 +28,15 @@ This will compile the `GCC` and `binutils` and install in the `build/tools/cross
 
 Once the toolkit has been built, we can build the project
 ```console
-$ ninja all
+$ ninja install
 ```
-This command will compile the entire `YuzuOS`, using the `ninja` command will automatically build as many jobs in parallel as it detects processors
+This command will compile the entire `YuzuOS` and install the built files into `build/sysroot`, using the `ninja` command will automatically build as many jobs in parallel as it detects processors
+
+Now build a disk image from the `build/sysroot` directory
+```console
+$ ninja image
+```
+This will create a disk image called `qemu_img` using the file system `ext2` and save it in the `build` directory
 
 ### Emulator
 
