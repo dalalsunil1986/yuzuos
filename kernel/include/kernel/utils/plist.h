@@ -40,6 +40,7 @@ struct plist_node
 #define plist_prev(pos) dlist_entry_prev(pos, node_list)
 
 void plist_head_init(struct plist_head *head);
+void plist_node_init(struct plist_node *node, int prio);
 void plist_add(struct plist_node *node, struct plist_head *head);
 void plist_remove(struct plist_node *node, struct plist_head *head);
 void plist_requeue(struct plist_node *node, struct plist_head *head);
