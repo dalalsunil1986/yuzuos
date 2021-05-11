@@ -6,6 +6,13 @@
 
 #define VFS_BYTES_P_SECTOR 512
 
+struct vfs_inode
+{
+  uint32_t blocks;
+  uint32_t size;
+  struct vfs_sb *sb;
+};
+
 struct vfs_sb
 {
   const char *devname;
@@ -34,3 +41,4 @@ struct vfs_type
 void virt_fs_init();
 void virt_fs_type_add(struct vfs_type *type);
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size);
+struct vfs_inode *virt_fs_inode_init();

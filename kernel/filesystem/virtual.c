@@ -10,6 +10,14 @@
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
 
+struct vfs_inode *virt_fs_inode_init()
+{
+  struct vfs_inode *inode = calloc(1, sizeof(struct vfs_inode));
+  inode->blocks = 0;
+  inode->size = 0;
+  return inode;
+}
+
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
 {
   // FIXME better error handling
