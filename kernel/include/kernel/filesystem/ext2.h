@@ -13,6 +13,11 @@
 #define EXT2_MIN_BLOCK_SIZE 1024
 
 #define EXT2_BLOCK_SIZE(sb) (EXT2_MIN_BLOCK_SIZE << sb->s_log_block_size)
+#define EXT2_GROUPS_P_BLOCK(sb) (EXT2_BLOCK_SIZE(sb) / sizeof(struct ext2_group_desc))
+#define EXT2_INODES_P_BLOCK(sb) (EXT2_BLOCK_SIZE(sb) / sb->s_inode_size)
+
+#define EXT2_GET_GROUP_FROM_INODE(sb, ino) ((ino - EXT2_STARTING_INO) / sb->s_inodes_per_group)
+#define EXT2_GET_RELATIVE_INODE_IN_GROUP(sb, ino) ((ino - EXT2_STARTING_INO) % sb->s_inodes_per_group)
 
 struct ext2_sb
 {

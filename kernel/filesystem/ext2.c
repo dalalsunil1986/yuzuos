@@ -2,7 +2,9 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/string.h>
+#include <kernel/utils/stat.h>
 #include <kernel/system/sys.h>
+#include <kernel/memory/physical.h>
 #include <stddef.h>
 
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type);
@@ -21,12 +23,64 @@ char *ext2_fs_bread_block(struct vfs_sb *sb, uint32_t block)
   return ext2_fs_bread(sb, block, sb->blocksize);
 }
 
+struct ext2_group_desc *ext2_fs_group_desc_get(struct vfs_sb *sb, uint32_t group)
+{
+  struct ext2_group_desc *description = calloc(1, sizeof(struct ext2_group_desc));
+  struct ext2_sb *ext2_sb = (struct ext2_sb *)sb->info;
+  uint32_t block = ext2_sb->s_first_data_block + 1 + group / EXT2_GROUPS_P_BLOCK(ext2_sb);
+  char *buffer = ext2_fs_bread_block(sb, block);
+  uint32_t offset = group % EXT2_GROUPS_P_BLOCK(ext2_sb) * sizeof(struct ext2_group_desc);
+  memcpy(description, buffer + offset, sizeof(struct ext2_group_desc));
+  return description;
+}
+
+struct ext2_inode *ext2_fs_inode_get(struct vfs_sb *sb, ino_t ino)
+{
+  struct ext2_sb *ext2_sb = (struct ext2_sb *)sb->info;
+  uint32_t group = EXT2_GET_GROUP_FROM_INODE(ext2_sb, ino);
+  struct ext2_group_desc *gdp = ext2_fs_group_desc_get(sb, group);
+  uint32_t block = gdp->bg_inode_table + EXT2_GET_RELATIVE_INODE_IN_GROUP(ext2_sb, ino) / EXT2_INODES_P_BLOCK(ext2_sb);
+  uint32_t offset = (EXT2_GET_RELATIVE_INODE_IN_GROUP(ext2_sb, ino) % EXT2_INODES_P_BLOCK(ext2_sb)) * sizeof(struct ext2_inode);
+  char *table_buf = ext2_fs_bread_block(sb, block);
+
+  return (struct ext2_inode *)(table_buf + offset);
+}
 
 struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb)
 {
   struct vfs_inode *inode = virt_fs_inode_init();
   inode->sb = sb;
   return inode;
+}
+
+void ext2_fs_inode_read(struct vfs_inode *inode)
+{
+  struct ext2_inode *ext2_inode = ext2_fs_inode_get(inode->sb, inode->ino);
+  inode->mode = ext2_inode->i_mode;
+  inode->gid = ext2_inode->i_gid;
+  inode->uid = ext2_inode->i_uid;
+  inode->nlink = ext2_inode->i_links_count;
+  inode->size = ext2_inode->i_size;
+  inode->atime = ext2_inode->i_atime;
+  inode->ctime = ext2_inode->i_ctime;
+  inode->mtime = ext2_inode->i_mtime;
+  inode->blksize = PHYS_MM_BLOCK; /* This is the optimal IO size (for stat), not the fs block size */
+  inode->blocks = ext2_inode->i_blocks;
+  inode->flags = ext2_inode->i_flags;
+  inode->info = ext2_inode;
+
+  if (S_ISREG(inode->mode))
+  {
+    //FIXME implement file operations
+  }
+  else if (S_ISDIR(inode->mode))
+  {
+    //FIXME implement directory operations
+  }
+  else
+  {
+    //FIXME implement special operations
+  }
 }
 
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type)
@@ -52,6 +106,7 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
 
   struct vfs_inode *inode = ext2_fs_inode_alloc(vfs_sb);
   inode->ino = EXT2_ROOT_INO;
+  ext2_fs_inode_read(inode);
 
   struct vfs_mount *mount = calloc(1, sizeof(struct vfs_mount));
   mount->sb = vfs_sb;
