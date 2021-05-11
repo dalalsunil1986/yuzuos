@@ -26,13 +26,17 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   (void)path;
 
   struct vfs_sb *vfs_sb = calloc(1, sizeof(struct vfs_sb));
+  vfs_sb->devname = strdup(name);
+  vfs_sb->blocksize = EXT2_MIN_BLOCK_SIZE;
 
   struct ext2_sb *ext2_sb = calloc(1, sizeof(struct ext2_sb));
+  char *buffer = ext2_fs_bread_block(vfs_sb, 1);
+  memcpy(ext2_sb, buffer, vfs_sb->blocksize);
+
   if (ext2_sb->s_magic != EXT2_SUPER_MAGIC)
     sys_panic("Ext2 FS: Wrong magic value", NULL);
 
-  vfs_sb->type = ext2_sb;
-  vfs_sb->devname = strdup(name);
+  vfs_sb->info = ext2_sb;
   vfs_sb->type = type;
   vfs_sb->magic = ext2_sb->s_magic;
   vfs_sb->blocksize = EXT2_BLOCK_SIZE(ext2_sb);
