@@ -1,5 +1,16 @@
 #include <kernel/utils/string.h>
 
+void *memcpy(void *dest, const void *src, size_t n)
+{
+  char *p_dest = (char *)dest;
+  char *p_src = (char *)src;
+
+  for (size_t i = 0; i < n; i++)
+    p_dest[i] = p_src[i];
+
+  return dest;
+}
+
 void *memset(void *str, int c, size_t n)
 {
   char *p_str = (char *)str;
