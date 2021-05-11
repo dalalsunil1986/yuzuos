@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 
 struct dlist_head
 {
@@ -71,6 +72,7 @@ void dlist_head_init(struct dlist_head *list);
 void dlist_add(struct dlist_head *new, struct dlist_head *head);
 void dlist_add_tail(struct dlist_head *new, struct dlist_head *head);
 void dlist_remove(struct dlist_head *entry);
+void dlist_remove_init(struct dlist_head *entry);
 void dlist_replace(struct dlist_head *old, struct dlist_head *new);
 void dlist_swap(struct dlist_head *entry1, struct dlist_head *entry2);
 void dlist_move(struct dlist_head *list, struct dlist_head *head);
