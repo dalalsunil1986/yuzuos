@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#define GDT_ENTRIES 5
+#define GDT_ENTRIES 6
 
 struct gdt_entry
 {
@@ -20,4 +20,5 @@ struct gdt_pointer
   uint32_t base;
 } __attribute((packed));
 
+void gdt_entry_add(uint8_t index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity);
 void gdt_init();

@@ -1,10 +1,12 @@
 #include <kernel/memory/gdt.h>
 #include <kernel/utils/log.h>
+#include <kernel/task/tss.h>
 
 static struct gdt_entry gdt_entries[GDT_ENTRIES];
 static struct gdt_pointer gdt;
 
 extern void gdt_flush(uint32_t addr);
+extern void tss_flush();
 
 void gdt_entry_add(uint8_t index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity)
 {
@@ -27,8 +29,9 @@ void gdt_init()
   gdt_entry_add(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
   gdt_entry_add(3, 0, 0xFFFFFFFF, 0xFA, 0xCF);
   gdt_entry_add(4, 0, 0xFFFFFFFF, 0xF2, 0xCF);
-
+  tss_init(5, 0x10, 0);
   gdt_flush((uint32_t)&gdt);
+  tss_flush();
 
   log_info("GDT: Initialized\n");
 }

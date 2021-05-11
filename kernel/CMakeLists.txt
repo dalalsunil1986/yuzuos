@@ -7,7 +7,9 @@ set(ASM_SOURCES
   
   interrupts/idt_flush.S
   interrupts/irq.S
-  interrupts/isr.S)
+  interrupts/isr.S
+  
+  task/tss_flush.S)
 
 set(C_SOURCES
   init.c
@@ -43,7 +45,9 @@ set(C_SOURCES
   drivers/ide.c
   
   filesystem/virtual.c
-  filesystem/ext2.c)
+  filesystem/ext2.c
+  
+  task/tss.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
