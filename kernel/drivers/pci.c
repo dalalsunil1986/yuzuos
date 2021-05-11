@@ -1,6 +1,9 @@
 #include <kernel/drivers/pci.h>
 #include <kernel/utils/log.h>
+#include <kernel/utils/stdlib.h>
 #include <kernel/system/io.h>
+
+static struct dlist_head pci_list;
 
 void pci_bus_scan(uint8_t bus);
 
@@ -68,8 +71,14 @@ void pci_device_set(uint8_t bus, uint8_t device, uint8_t function)
 
     if (class_code != PCI_CLASS_CODE_BRIDGE_DEVICE)
     {
-      //FIXME Create a pci_device list
       uint32_t bar0 = pci_field_read(addr, PCI_BAR0);
+      struct pci_device *device = calloc(1, sizeof(struct pci_device));
+      device->addr = addr;
+      device->device_id = device_id;
+      device->vendor_id = vendor_id;
+      device->bar0 = bar0;
+
+      dlist_add_tail(&device->list, &pci_list);
       log_info("PCI: Addr = 0x%x, class_code = 0x%x, sub_class = 0x%x, vendor_id = 0x%x, device_id = 0x%x, bar0 = 0x%x\n", addr, class_code, sub_class, vendor_id, device_id, bar0);
     }
   }
@@ -105,6 +114,8 @@ void pci_bus_scan(uint8_t bus)
 
 void pci_init()
 {
+  dlist_head_init(&pci_list);
+
   uint16_t header = pci_hdr_type_get(pci_addr_get(0, 0, 0));
   if ((header & PCI_DEVICE_MULTI_FUNC) == 0)
     pci_bus_scan(0);
