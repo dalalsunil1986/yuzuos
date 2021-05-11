@@ -39,7 +39,10 @@ set(C_SOURCES
   drivers/mouse.c
   drivers/vga.c
   drivers/pci.c
-  drivers/ide.c)
+  drivers/ide.c
+  
+  filesystem/virtual.c
+  filesystem/ext2.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 

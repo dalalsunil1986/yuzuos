@@ -15,6 +15,8 @@
 #include <kernel/drivers/vga.h>
 #include <kernel/drivers/pci.h>
 #include <kernel/drivers/ide.h>
+#include <kernel/filesystem/virtual.h>
+#include <kernel/filesystem/ext2.h>
 #include <stdbool.h>
 
 void kernel_init(uint32_t magic, uint32_t addr)
@@ -34,6 +36,8 @@ void kernel_init(uint32_t magic, uint32_t addr)
   vga_init();
   pci_init();
   ide_init();
+  ext2_fs_init();
+  virt_fs_init();
   syscall_init();
 
   sys_sti();
