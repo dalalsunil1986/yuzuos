@@ -26,8 +26,6 @@ extern void irq15();
 
 void irq_handler_set(uint8_t index, itr_handler_t handler)
 {
-  sys_cli();
-
   for (uint8_t i = 0; i < IRQ_DEPTH; i++)
   {
     if (irq[i * IRQ_SIZE + index])
@@ -35,24 +33,16 @@ void irq_handler_set(uint8_t index, itr_handler_t handler)
     irq[i * IRQ_SIZE + index] = handler;
     break;
   }
-
-  sys_sti();
 }
 
 void irq_handler_unset(uint8_t index)
 {
-  sys_cli();
-
   for (uint8_t i = 0; i < IRQ_DEPTH; i++)
     irq[i * IRQ_SIZE + index] = NULL;
-
-  sys_sti();
 }
 
 void irq_handler(struct itr_registers *registers)
 {
-  sys_cli();
-
   if (registers->int_no <= 47 && registers->int_no >= 32)
   {
     for (size_t i = 0; i < IRQ_DEPTH; i++)
@@ -62,15 +52,10 @@ void irq_handler(struct itr_registers *registers)
         break;
 
       if (handler(registers))
-        goto done;
+        continue;
     }
-    log_error("IRQ: Unhandled int_no = %d\n", registers->int_no - 32);
-    sys_panic("IRQ: Unhandled", registers);
+    pic_eoi(registers->int_no - 32);
   }
-
-done:
-  pic_eoi(registers->int_no - 32);
-  sys_sti();
 }
 
 void irq_init()
