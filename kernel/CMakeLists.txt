@@ -17,6 +17,7 @@ set(C_SOURCES
   utils/bitmap.c
   utils/string.c
   utils/stdlib.c
+  utils/dlist.c
   
   memory/gdt.c
   memory/physical.c
