@@ -11,6 +11,16 @@ static struct vfs_type ext2_fs_type = {
     .name = "ext2",
     .mount = ext2_fs_mount};
 
+char *ext2_fs_bread(struct vfs_sb *sb, uint32_t block, uint32_t size)
+{
+  return virt_fs_bread(sb->devname, block * (sb->blocksize / VFS_BYTES_P_SECTOR), size);
+}
+
+char *ext2_fs_bread_block(struct vfs_sb *sb, uint32_t block)
+{
+  return ext2_fs_bread(sb, block, sb->blocksize);
+}
+
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type)
 {
   (void)path;
