@@ -11,7 +11,7 @@ void idt_entry_add(uint8_t index, uint32_t base, uint16_t selector, uint8_t flag
   idt_entries[index].base_low = base & 0xFFFF;
   idt_entries[index].base_high = (base >> 16) & 0xFFFF;
   idt_entries[index].selector = selector;
-  idt_entries[index].flags = flags;
+  idt_entries[index].flags = flags | 0x60;
   idt_entries[index].zero = 0;
 }
 
