@@ -4,6 +4,7 @@
 #include <kernel/utils/string.h>
 #include <kernel/utils/stat.h>
 #include <kernel/utils/errno.h>
+#include <kernel/utils/math.h>
 #include <kernel/system/sys.h>
 #include <kernel/system/limits.h>
 #include <kernel/memory/physical.h>
@@ -178,6 +179,26 @@ int ext2_fs_bread_rec(struct vfs_sb *sb, int level, uint32_t block, const void *
   }
   else
     return action(sb, block, value);
+}
+
+void ext2_fs_bread_n_rec(struct vfs_sb *sb, uint32_t block, char *buffer[], loff_t ppos, uint32_t *target_pos, size_t count, int level)
+{
+  if (level > 0)
+  {
+    uint32_t *buffer_block = (uint32_t *)ext2_fs_bread_block(sb, block);
+    for (uint32_t i = 0, times = sb->blocksize / 4; *target_pos < ppos + count && i < times; i++)
+      ext2_fs_bread_n_rec(sb, buffer_block[i], buffer, ppos, target_pos, count, level - 1);
+  }
+  else
+  {
+    char *buffer_block = ext2_fs_bread_block(sb, block);
+    int pos_start = (ppos > *target_pos) ? ppos - *target_pos : 0;
+    uint32_t pos_end = ((ppos + count) < (*target_pos + sb->blocksize)) ? (*target_pos + sb->blocksize - ppos - count) : 0;
+    memcpy(*buffer, buffer_block + pos_start, sb->blocksize - pos_start - pos_end);
+
+    *target_pos += sb->blocksize;
+    *buffer += sb->blocksize - pos_start - pos_end;
+  }
 }
 
 struct vfs_inode *ext2_fs_lookup(struct vfs_inode *dir, struct vfs_dentry *dentry)
