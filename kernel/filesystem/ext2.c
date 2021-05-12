@@ -161,6 +161,23 @@ int ext2_fs_ino_find(struct vfs_sb *sb, uint32_t block, const void *value)
   return -ENOENT;
 }
 
+int ext2_fs_bread_rec(struct vfs_sb *sb, int level, uint32_t block, const void *value, ext2_fs_action_t action)
+{
+  if (level > 0)
+  {
+    int result = -ENOENT;
+
+    uint32_t *buffer = (uint32_t *)ext2_fs_bread_block(sb, block);
+    for (int i = 0, nblocks = sb->blocksize / 4; i < nblocks; i++)
+      if ((result = ext2_fs_bread_rec(sb, level - 1, buffer[i], value, action)) >= 0)
+        break;
+
+    return result;
+  }
+  else
+    return action(sb, block, value);
+}
+
 struct vfs_type *ext2_fs_type_get()
 {
   return &ext2_fs_type;
