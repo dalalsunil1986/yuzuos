@@ -17,6 +17,7 @@
 #define PAGE_DIR_BASE 0xFFFFF000
 
 #define HEAP_BOTTOM 0xD0000000
+#define HEAP_TOP 0xF0000000
 
 enum page_tbl_flags
 {
@@ -43,4 +44,5 @@ struct page_dir
 struct page_dir *virt_mm_dir_get();
 void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual, uint32_t flags);
 uint32_t virt_mm_phys_addr_get(uint32_t virtual);
+struct page_dir *virt_mm_addr_create(struct page_dir *dir);
 void virt_mm_init();

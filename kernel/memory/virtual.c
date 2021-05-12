@@ -1,6 +1,7 @@
 #include <kernel/memory/virtual.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
+#include <kernel/utils/stdlib.h>
 
 static struct page_dir *virt_mm_dir;
 
@@ -20,6 +21,19 @@ void virt_mm_frame_set(uint32_t *entry, uint32_t addr)
 void virt_mm_flag_set(uint32_t *entry, uint32_t flags)
 {
   *entry |= flags;
+}
+
+struct page_dir *virt_mm_addr_create(struct page_dir *dir)
+{
+  char *align = malloc_align(PHYS_MM_BLOCK);
+  if (align)
+    free(align);
+
+  for (int i = 768; i < PAGE_DIR_ENTRIES - 1; i++)
+    dir->entries[i] = virt_mm_phys_addr_get(PAGE_TBL_BASE + i * PHYS_MM_BLOCK);
+
+  dir->entries[PAGE_DIR_ENTRIES - 1] = virt_mm_phys_addr_get((uint32_t)dir);
+  return dir;
 }
 
 uint32_t virt_mm_phys_addr_get(uint32_t virtual)
