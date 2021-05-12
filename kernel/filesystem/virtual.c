@@ -12,6 +12,17 @@
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
 
+struct vfs_mount *virt_fs_mount_get(struct vfs_dentry *dentry)
+{
+  struct vfs_mount *iter;
+  dlist_foreach_entry(iter, &virt_fs_mount_list, list)
+  {
+    if (iter->mount == dentry)
+      return iter;
+  }
+  return NULL;
+}
+
 struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *parent)
 {
   struct vfs_dentry *dentry = calloc(1, sizeof(struct vfs_dentry));
