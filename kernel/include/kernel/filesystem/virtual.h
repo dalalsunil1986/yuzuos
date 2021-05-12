@@ -51,6 +51,7 @@ struct vfs_dentry
   struct vfs_inode *inode;
   struct vfs_dentry *parent;
   struct dlist_head list;
+  struct dlist_head subdirs;
 };
 
 struct vfs_inode_op

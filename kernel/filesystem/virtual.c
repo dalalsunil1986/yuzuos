@@ -31,7 +31,7 @@ struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *par
   struct vfs_dentry *dentry = calloc(1, sizeof(struct vfs_dentry));
   dentry->name = strdup(name);
   dentry->parent = parent;
-  dlist_head_init(&dentry->list);
+  dlist_head_init(&dentry->subdirs);
 
   if (parent)
     dentry->sb = parent->sb;
@@ -159,7 +159,7 @@ int virt_fs_path_find(const char *path, int flags, mode_t mode, struct nameidata
 
     struct vfs_dentry *iter = NULL;
     struct vfs_dentry *child = NULL;
-    dlist_foreach_entry(iter, &nameidata->dentry->list, list)
+    dlist_foreach_entry(iter, &nameidata->dentry->subdirs, list)
     {
       if (!strcmp(name, iter->name))
       {
@@ -193,7 +193,7 @@ int virt_fs_path_find(const char *path, int flags, mode_t mode, struct nameidata
         return -EEXIST;
 
       child->inode = inode;
-      dlist_add_tail(&child->list, &nameidata->dentry->list);
+      dlist_add_tail(&child->list, &nameidata->dentry->subdirs);
       nameidata->dentry = child;
     }
 
