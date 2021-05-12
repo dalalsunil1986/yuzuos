@@ -120,6 +120,21 @@ int virt_fs_fstat(int fd, struct kstat *stat)
   return virt_fs_getattr(file->mount, file->dentry, stat);
 }
 
+ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
+{
+  if (fd < 0)
+    return -EBADF;
+
+  struct vfs_file *file = sched_process_get()->files->fd[fd];
+  if (!file)
+    return -EBADF;
+
+  if (file->mode & FMODE_CAN_READ)
+    return file->op->read(file, buf, count, file->pos);
+
+  return -EINVAL;
+}
+
 void virt_fs_type_add(struct vfs_type *type)
 {
   dlist_add_tail(&type->list, &virt_fs_type_list);
