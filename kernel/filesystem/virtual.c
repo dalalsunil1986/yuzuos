@@ -61,6 +61,9 @@ void virt_fs_mount_root(const char *name, struct vfs_type *type)
     sys_panic("Virtual FS: Failed to mount root file system", NULL);
 
   dlist_add_tail(&mount->list, &virt_fs_mount_list);
+  sched_process_get()->fs->mount = mount;
+  sched_process_get()->fs->root = mount->root;
+
   log_info("Virtual FS: Root mounted name = %s, type = %s\n", name, type->name);
 }
 

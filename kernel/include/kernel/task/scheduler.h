@@ -44,9 +44,17 @@ struct thread
   struct plist_node list;
 };
 
+struct process_fs
+{
+  struct vfs_dentry *root;
+  struct vfs_mount *mount;
+};
+
 struct process
 {
   pid_t pid;
+
+  struct process_fs *fs;
   struct thread *thread;
   struct process *parent;
   struct page_dir *page_dir;
