@@ -17,6 +17,16 @@ extern void sched_switch(uint32_t *esp, uint32_t esp_new, uint32_t physical);
 void sched_thread_queue(struct thread *thread);
 void sched_thread_unqueue(struct thread *thread);
 
+struct process *sched_process_get()
+{
+  return sched_process;
+}
+
+struct thread *sched_thread_get()
+{
+  return sched_thread;
+}
+
 void sched_lock()
 {
   sys_cli();

@@ -55,3 +55,5 @@ struct process
 void sched_init();
 void sched_schedule();
 void sched_load(const char *path);
+struct process *sched_process_get();
+struct thread *sched_thread_get();
