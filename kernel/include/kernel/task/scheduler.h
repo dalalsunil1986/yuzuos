@@ -57,10 +57,30 @@ struct process_fs
   struct vfs_mount *mount;
 };
 
+struct process_vm
+{
+  uint32_t start;
+  uint32_t end;
+
+  struct process_mm *mm;
+  struct dlist_head list;
+};
+
+struct process_mm
+{
+  uint32_t brk_start;
+  uint32_t brk;
+  uint32_t brk_end;
+  uint32_t cache;
+
+  struct dlist_head list;
+};
+
 struct process
 {
   pid_t pid;
 
+  struct process_mm *mm;
   struct process_fs *fs;
   struct process_files *files;
   struct thread *thread;

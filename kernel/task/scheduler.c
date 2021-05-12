@@ -144,8 +144,11 @@ struct process *sched_process_create(struct process *parent)
   process->pid = sched_pid++;
   process->page_dir = parent ? virt_mm_addr_create(parent->page_dir) : virt_mm_dir_get();
   process->parent = parent;
+  process->mm = calloc(1, sizeof(struct process_mm));
   process->fs = sched_process_clone_fs(parent);
   process->files = sched_process_clone_files(parent);
+
+  dlist_head_init(&process->mm->list);
 
   sched_unlock();
 
