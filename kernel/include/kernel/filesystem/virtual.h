@@ -3,6 +3,7 @@
 #include <kernel/utils/dlist.h>
 #include <kernel/utils/types.h>
 #include <kernel/utils/fcntl.h>
+#include <kernel/utils/stat.h>
 #include <stdint.h>
 
 #define VFS_BYTES_P_SECTOR 512
@@ -46,6 +47,13 @@ struct vfs_dentry
   struct dlist_head list;
 };
 
+struct vfs_inode_op
+{
+  struct vfs_inode *(*lookup)(struct vfs_inode *dir, struct vfs_dentry *dentry);
+  struct vfs_inode *(*create)(struct vfs_inode *dir, struct vfs_dentry *dentry, mode_t mode);
+  int (*getattr)(struct vfs_mount *mount, struct vfs_dentry *dentry, struct kstat *kstat);
+};
+
 struct vfs_inode
 {
   void *info;
@@ -57,10 +65,14 @@ struct vfs_inode
   umode_t mode;
   gid_t gid;
   uid_t uid;
+  dev_t rdev;
   nlink_t nlink;
   time_t atime;
   time_t ctime;
   time_t mtime;
+
+  struct vfs_inode_op *op;
+  struct vfs_file_op *fop;
   struct vfs_sb *sb;
 };
 
