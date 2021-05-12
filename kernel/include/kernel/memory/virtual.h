@@ -18,6 +18,7 @@
 
 #define HEAP_BOTTOM 0xD0000000
 #define HEAP_TOP 0xF0000000
+#define HEAP_USER_TOP 0x40000000
 
 enum page_tbl_flags
 {
