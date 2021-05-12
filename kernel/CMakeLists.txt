@@ -50,7 +50,8 @@ set(C_SOURCES
   filesystem/ext2.c
   
   task/scheduler.c
-  task/tss.c)
+  task/tss.c
+  task/elf32.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
