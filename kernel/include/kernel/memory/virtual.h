@@ -23,6 +23,7 @@ enum page_tbl_flags
 {
   PAGE_TBL_PRESENT = 1,
   PAGE_TBL_WRITABLE = 2,
+  PAGE_TBL_USER = 4
 };
 
 enum page_dir_flags
