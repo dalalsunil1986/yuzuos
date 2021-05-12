@@ -159,5 +159,7 @@ struct ext2_dir_entry
   char name[];
 };
 
+typedef int (*ext2_fs_action_t)(struct vfs_sb *sb, uint32_t block, const void *value);
+
 void ext2_fs_init();
 struct vfs_type *ext2_fs_type_get();

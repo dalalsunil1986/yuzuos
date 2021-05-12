@@ -139,9 +139,9 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   return mount;
 }
 
-int ext2_fs_ino_find(struct vfs_sb *sb, uint32_t block, void *arg)
+int ext2_fs_ino_find(struct vfs_sb *sb, uint32_t block, const void *value)
 {
-  const char *name = (const char *)arg;
+  const char *name = (const char *)value;
   char *buffer = ext2_fs_bread_block(sb, block);
   uint32_t size = 0;
   char name_tmp[NAME_MAX];
