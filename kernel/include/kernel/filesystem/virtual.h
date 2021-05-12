@@ -38,6 +38,7 @@ struct vfs_sb
   const char *devname;
   const void *info;
 
+  dev_t dev;
   uint32_t blocksize;
   uint32_t blocksize_bits;
   uint32_t magic;
