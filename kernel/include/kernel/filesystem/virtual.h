@@ -111,8 +111,15 @@ struct vfs_sb
   uint32_t blocksize_bits;
   uint32_t magic;
 
+  struct vfs_super_op *sop;
   struct vfs_dentry *root;
   struct vfs_type *type;
+};
+
+struct vfs_super_op
+{
+  struct vfs_inode *(*inode_alloc)(struct vfs_sb *sb);
+  void (*inode_read)(struct vfs_inode *inode);
 };
 
 struct vfs_mount

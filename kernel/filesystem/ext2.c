@@ -8,6 +8,8 @@
 #include <stddef.h>
 
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type);
+struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb);
+void ext2_fs_inode_read(struct vfs_inode *inode);
 
 static struct vfs_type ext2_fs_type = {
     .name = "ext2",
@@ -20,6 +22,10 @@ static struct vfs_file_op ext2_fs_dir_op = {};
 static struct vfs_inode_op ext2_fs_dir_inode_op = {};
 
 static struct vfs_inode_op ext2_fs_special_inode_op = {};
+
+static struct vfs_super_op ext2_fs_super_op = {
+    .inode_alloc = ext2_fs_inode_alloc,
+    .inode_read = ext2_fs_inode_read};
 
 char *ext2_fs_bread(struct vfs_sb *sb, uint32_t block, uint32_t size)
 {
@@ -112,6 +118,7 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   vfs_sb->magic = ext2_sb->s_magic;
   vfs_sb->blocksize = EXT2_BLOCK_SIZE(ext2_sb);
   vfs_sb->blocksize_bits = ext2_sb->s_log_block_size;
+  vfs_sb->sop = &ext2_fs_super_op;
 
   struct vfs_inode *inode = ext2_fs_inode_alloc(vfs_sb);
   inode->ino = EXT2_ROOT_INO;
