@@ -1,7 +1,9 @@
 #include <kernel/task/scheduler.h>
 #include <kernel/task/tss.h>
+#include <kernel/task/elf32.h>
 #include <kernel/system/sys.h>
 #include <kernel/interrupts/irq.h>
+#include <kernel/interrupts/isr.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/string.h>
@@ -14,6 +16,7 @@ static struct thread *sched_thread;
 static struct process *sched_process;
 
 extern void sched_switch(uint32_t *esp, uint32_t esp_new, uint32_t physical);
+extern void sched_jump_usermode(uint32_t eip, uint32_t esp, uint32_t addr);
 void sched_thread_queue(struct thread *thread);
 void sched_thread_unqueue(struct thread *thread);
 
@@ -81,10 +84,26 @@ void sched_thread_unqueue(struct thread *thread)
 
 void sched_thread_entry(const char *path, struct thread *thread)
 {
-  (void)path;
-  (void)thread;
-  while (1)
-    ;
+  sched_unlock();
+  struct elf32_layout *elf = elf32_load(path);
+  if (!elf)
+  {
+    log_error("Scheduler: Failed to load ELF file, path = %s, tid = %d\n", path, thread->tid);
+    sched_thread_unqueue(thread);
+  }
+
+  thread->stack_user = elf->stack;
+  tss_set_stack(0x10, thread->stack_kernel);
+
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = (uint32_t)NULL;
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = (uint32_t)NULL;
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = (uint32_t)0;
+
+  log_info("Scheduler: Enter usermode, pid = %d, tid = %d, entry = 0x%x, stack = 0x%x\n", sched_process->pid, sched_thread->tid, elf->entry, elf->stack);
+  sched_jump_usermode(elf->stack, elf->entry, SCHED_PAGE_FAULT);
 }
 
 struct thread *sched_thread_create(const char *path, struct process *process)

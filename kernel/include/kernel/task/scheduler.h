@@ -9,6 +9,7 @@
 
 #define SCHED_TIME_SLICE 8
 #define SCHED_STACK_SIZE 0x2000
+#define SCHED_HEAP_SIZE 0x20000
 #define SCHED_PAGE_FAULT 0xFFFFFFFF
 
 struct trap_frame
@@ -40,6 +41,7 @@ struct thread
   uint32_t time;
   uint32_t esp;
   uint32_t stack_kernel;
+  uint32_t stack_user;
 
   enum thread_state state;
   struct process *process;
