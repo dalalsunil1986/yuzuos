@@ -13,6 +13,14 @@ static struct vfs_type ext2_fs_type = {
     .name = "ext2",
     .mount = ext2_fs_mount};
 
+static struct vfs_file_op ext2_fs_file_op = {};
+static struct vfs_inode_op ext2_fs_file_inode_op = {};
+
+static struct vfs_file_op ext2_fs_dir_op = {};
+static struct vfs_inode_op ext2_fs_dir_inode_op = {};
+
+static struct vfs_inode_op ext2_fs_special_inode_op = {};
+
 char *ext2_fs_bread(struct vfs_sb *sb, uint32_t block, uint32_t size)
 {
   return virt_fs_bread(sb->devname, block * (sb->blocksize / VFS_BYTES_P_SECTOR), size);
@@ -71,15 +79,18 @@ void ext2_fs_inode_read(struct vfs_inode *inode)
 
   if (S_ISREG(inode->mode))
   {
-    //FIXME implement file operations
+    inode->op = &ext2_fs_file_inode_op;
+    inode->fop = &ext2_fs_file_op;
   }
   else if (S_ISDIR(inode->mode))
   {
-    //FIXME implement directory operations
+    inode->op = &ext2_fs_dir_inode_op;
+    inode->fop = &ext2_fs_dir_op;
   }
   else
   {
-    //FIXME implement special operations
+    inode->op = &ext2_fs_special_inode_op;
+    virt_fs_inode_special_init(inode, inode->mode, ext2_inode->i_block[0]);
   }
 }
 
