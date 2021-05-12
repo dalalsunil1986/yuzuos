@@ -238,7 +238,7 @@ int virt_fs_open(const char *path, int flags, ...)
   return fd;
 }
 
-ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
+ssize_t virt_fs_fread(int fd, char *buffer, size_t count)
 {
   if (fd < 0)
     return -EBADF;
@@ -248,7 +248,7 @@ ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
     return -EBADF;
 
   if (file->mode & FMODE_CAN_READ)
-    return file->op->read(file, buf, count, file->pos);
+    return file->op->read(file, buffer, count, file->pos);
 
   return -EINVAL;
 }
