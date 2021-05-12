@@ -1,5 +1,7 @@
 #pragma once
 
+#include <kernel/utils/types.h>
+
 #define S_IFMT 00170000
 #define S_IFSOCK 0140000
 #define S_IFLNK 0120000
@@ -34,3 +36,20 @@
 #define S_IROTH 00004
 #define S_IWOTH 00002
 #define S_IXOTH 00001
+
+struct kstat
+{
+  dev_t dev;
+  ino_t ino;
+  mode_t mode;
+  nlink_t nlink;
+  uid_t uid;
+  gid_t gid;
+  dev_t rdev;
+  off_t size;
+  blksize_t blksize;
+  blkcnt_t blocks;
+  time_t atim;
+  time_t mtim;
+  time_t ctim;
+};
