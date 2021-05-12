@@ -239,6 +239,9 @@ void sched_init()
 
   plist_head_init(&sched_list);
 
+  sched_process = sched_process_create(NULL);
+  sched_thread = sched_thread_create(NULL, sched_process);
+
   irq_handler_set(0, sched_handler);
 
   log_info("Scheduler: Initialized\n");
