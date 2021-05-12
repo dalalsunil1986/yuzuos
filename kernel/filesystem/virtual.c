@@ -6,6 +6,7 @@
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/math.h>
 #include <kernel/utils/string.h>
+#include <kernel/task/scheduler.h>
 #include <stddef.h>
 
 static struct dlist_head virt_fs_mount_list;
