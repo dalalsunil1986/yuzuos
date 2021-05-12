@@ -270,9 +270,19 @@ char *virt_fs_read(const char *path)
     return NULL;
 
   struct kstat *stat = calloc(1, sizeof(struct kstat));
-  virt_fs_fstat(fd, stat);
+  if (!stat)
+    return NULL;
+
+  if (virt_fs_fstat(fd, stat) < 0)
+    return NULL;
+
   char *buffer = calloc(stat->size, sizeof(char));
-  virt_fs_fread(fd, buffer, stat->size);
+  if (!buffer)
+    return NULL;
+
+  if (virt_fs_fread(fd, buffer, stat->size) < 0)
+    return NULL;
+
   return buffer;
 }
 
