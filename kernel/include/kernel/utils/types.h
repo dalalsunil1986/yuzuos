@@ -1,8 +1,10 @@
 #pragma once
 
 typedef int pid_t;
+typedef int ssize_t;
 
 typedef long long off_t;
+typedef long long loff_t;
 
 typedef signed long time_t;
 typedef signed long blksize_t;
