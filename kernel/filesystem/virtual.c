@@ -7,6 +7,7 @@
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/math.h>
 #include <kernel/utils/string.h>
+#include <kernel/utils/errno.h>
 #include <kernel/task/scheduler.h>
 #include <stddef.h>
 
@@ -97,6 +98,14 @@ int virt_fs_getattr(struct vfs_mount *mnt, struct vfs_dentry *dentry, struct kst
     stat->blksize = sb->blocksize;
   }
   return 0;
+}
+
+int virt_fs_fd_find(int limit)
+{
+  for (int i = limit; i < 256; i++)
+    if (!sched_process_get()->files->fd[i])
+      return i;
+  return -EINVAL;
 }
 
 void virt_fs_type_add(struct vfs_type *type)
