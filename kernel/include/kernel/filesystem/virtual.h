@@ -6,6 +6,7 @@
 #include <kernel/utils/stat.h>
 #include <stdint.h>
 
+#define VFS_NAME_MAX 256
 #define VFS_BYTES_P_SECTOR 512
 
 #define FMODE_READ ((fmode_t)0x1)
@@ -134,3 +135,4 @@ void virt_fs_type_add(struct vfs_type *type);
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size);
 struct vfs_inode *virt_fs_inode_alloc();
 struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *parent);
+char *virt_fs_read(const char *path);
