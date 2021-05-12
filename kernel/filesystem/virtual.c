@@ -253,6 +253,19 @@ ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
   return -EINVAL;
 }
 
+char *virt_fs_read(const char *path)
+{
+  int fd = virt_fs_open(path, O_RDWR);
+  if (fd < 0)
+    return NULL;
+
+  struct kstat *stat = calloc(1, sizeof(struct kstat));
+  virt_fs_fstat(fd, stat);
+  char *buffer = calloc(stat->size, sizeof(char));
+  virt_fs_fread(fd, buffer, stat->size);
+  return buffer;
+}
+
 void virt_fs_type_add(struct vfs_type *type)
 {
   dlist_add_tail(&type->list, &virt_fs_type_list);
