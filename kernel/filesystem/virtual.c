@@ -10,6 +10,7 @@
 #include <kernel/utils/errno.h>
 #include <kernel/task/scheduler.h>
 #include <stddef.h>
+#include <stdarg.h>
 
 static struct dlist_head virt_fs_mount_list;
 static struct dlist_head virt_fs_type_list;
@@ -192,6 +193,49 @@ int virt_fs_path_find(const char *path, int flags, mode_t mode, struct nameidata
   }
 
   return 0;
+}
+
+int virt_fs_open(const char *path, int flags, ...)
+{
+  int fd = virt_fs_fd_find(0);
+  mode_t mode = 0;
+  if (flags & O_CREAT)
+  {
+    va_list ap;
+    va_start(ap, flags);
+    mode = va_arg(ap, int);
+    va_end(ap);
+  }
+
+  struct nameidata nameidata;
+  int result = virt_fs_path_find(path, flags, mode, &nameidata);
+  if (result < 0)
+    return result;
+
+  struct vfs_file *file = virt_fs_file_alloc();
+  file->dentry = nameidata.dentry;
+  file->mount = nameidata.mount;
+  file->flags = flags;
+  file->mode = OPEN_FMODE(flags);
+  file->op = nameidata.dentry->inode->fop;
+
+  if (file->mode & FMODE_READ)
+    file->mode |= FMODE_CAN_READ;
+  if (file->mode & FMODE_WRITE)
+    file->mode |= FMODE_CAN_WRITE;
+
+  if (file->op && file->op->open)
+  {
+    result = file->op->open(nameidata.dentry->inode, file);
+    if (result < 0)
+    {
+      free(file);
+      return result;
+    }
+  }
+
+  sched_process_get()->files->fd[fd] = file;
+  return fd;
 }
 
 ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
