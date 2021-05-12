@@ -72,7 +72,7 @@ void ext2_fs_inode_read(struct vfs_inode *inode)
   inode->atime = ext2_inode->i_atime;
   inode->ctime = ext2_inode->i_ctime;
   inode->mtime = ext2_inode->i_mtime;
-  inode->blksize = PHYS_MM_BLOCK; /* This is the optimal IO size (for stat), not the fs block size */
+  inode->blksize = PHYS_MM_BLOCK;
   inode->blocks = ext2_inode->i_blocks;
   inode->flags = ext2_inode->i_flags;
   inode->info = ext2_inode;
