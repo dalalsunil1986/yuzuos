@@ -120,6 +120,80 @@ int virt_fs_fstat(int fd, struct kstat *stat)
   return virt_fs_getattr(file->mount, file->dentry, stat);
 }
 
+int virt_fs_path_find(const char *path, int flags, mode_t mode, struct nameidata *nameidata)
+{
+  nameidata->mount = sched_process_get()->fs->mount;
+
+  int i = 0;
+  if (path[i] == '/')
+  {
+    nameidata->dentry = sched_process_get()->fs->mount->mount;
+    while (path[i] == '/')
+      i++;
+  }
+  else
+    nameidata->dentry = sched_process_get()->fs->root;
+
+  char name[VFS_NAME_MAX];
+  int length = strlen(path);
+  while (i < length)
+  {
+    memset(name, 0, sizeof(name));
+
+    for (int j = 0; path[i] != '/' && i < length; i++, j++)
+      name[j] = path[i];
+
+    while (path[i] == '/' && i < length)
+      i++;
+
+    struct vfs_dentry *iter = NULL;
+    struct vfs_dentry *child = NULL;
+    dlist_foreach_entry(iter, &nameidata->dentry->list, list)
+    {
+      if (!strcmp(name, iter->name))
+      {
+        child = iter;
+        break;
+      }
+    }
+
+    if (child)
+    {
+      nameidata->dentry = child;
+      if (i == length && flags & O_CREAT && flags & O_EXCL)
+        return -EEXIST;
+    }
+    else
+    {
+      child = virt_fs_dentry_alloc(name, nameidata->dentry);
+
+      struct vfs_inode *inode = NULL;
+      if (nameidata->dentry->inode->op->lookup)
+        inode = nameidata->dentry->inode->op->lookup(nameidata->dentry->inode, child);
+
+      if (inode == NULL)
+      {
+        if (i == length && flags & O_CREAT)
+          inode = nameidata->dentry->inode->op->create(nameidata->dentry->inode, child, i == length ? mode : S_IFDIR);
+        else
+          return -ENOENT;
+      }
+      else if (i == length && flags & O_CREAT && flags & O_EXCL)
+        return -EEXIST;
+
+      child->inode = inode;
+      dlist_add_tail(&child->list, &nameidata->dentry->list);
+      nameidata->dentry = child;
+    }
+
+    struct vfs_mount *mount = virt_fs_mount_get(nameidata->dentry);
+    if (mount)
+      nameidata->mount = mount;
+  }
+
+  return 0;
+}
+
 ssize_t virt_fs_fread(int32_t fd, char *buf, size_t count)
 {
   if (fd < 0)
