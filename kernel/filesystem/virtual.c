@@ -2,6 +2,7 @@
 #include <kernel/filesystem/ext2.h>
 #include <kernel/drivers/ide.h>
 #include <kernel/system/sys.h>
+#include <kernel/system/limits.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/math.h>
@@ -42,6 +43,13 @@ struct vfs_inode *virt_fs_inode_alloc()
   inode->blocks = 0;
   inode->size = 0;
   return inode;
+}
+
+struct vfs_file *virt_fs_file_alloc()
+{
+  struct vfs_file *file = calloc(1, sizeof(struct vfs_file));
+  file->max_count = INT_MAX;
+  return file;
 }
 
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
