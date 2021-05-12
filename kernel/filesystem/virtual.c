@@ -108,6 +108,18 @@ int virt_fs_fd_find(int limit)
   return -EINVAL;
 }
 
+int virt_fs_fstat(int fd, struct kstat *stat)
+{
+  if (fd < 0)
+    return -EBADF;
+
+  struct vfs_file *file = sched_process_get()->files->fd[fd];
+  if (!file)
+    return -EBADF;
+
+  return virt_fs_getattr(file->mount, file->dentry, stat);
+}
+
 void virt_fs_type_add(struct vfs_type *type)
 {
   dlist_add_tail(&type->list, &virt_fs_type_list);
