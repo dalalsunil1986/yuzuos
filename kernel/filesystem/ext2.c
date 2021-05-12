@@ -14,12 +14,14 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
 struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb);
 void ext2_fs_inode_read(struct vfs_inode *inode);
 struct vfs_inode *ext2_fs_lookup(struct vfs_inode *dir, struct vfs_dentry *dentry);
+ssize_t ext2_fs_read(struct vfs_file *file, char *buffer, size_t count, loff_t ppos);
 
 static struct vfs_type ext2_fs_type = {
     .name = "ext2",
     .mount = ext2_fs_mount};
 
-static struct vfs_file_op ext2_fs_file_op = {};
+static struct vfs_file_op ext2_fs_file_op = {
+    .read = ext2_fs_read};
 static struct vfs_inode_op ext2_fs_file_inode_op = {};
 
 static struct vfs_file_op ext2_fs_dir_op = {};
@@ -223,6 +225,32 @@ struct vfs_inode *ext2_fs_lookup(struct vfs_inode *dir, struct vfs_dentry *dentr
     }
   }
   return NULL;
+}
+
+ssize_t ext2_fs_read(struct vfs_file *file, char *buffer, size_t count, loff_t ppos)
+{
+  struct vfs_inode *inode = file->dentry->inode;
+  struct ext2_inode *ext2_inode = inode->info;
+  uint32_t target_pos = (ppos / inode->sb->blocksize) * inode->sb->blocksize;
+  char *p_buffer = buffer;
+
+  count = MIN_T(size_t, ppos + count, ext2_inode->i_size) - ppos;
+  while (target_pos < ppos + count)
+  {
+    uint32_t block = target_pos / inode->sb->blocksize;
+
+    if (block < EXT2_INO_UPPER_LEVEL0)
+      ext2_fs_bread_n_rec(inode->sb, ext2_inode->i_block[block], &p_buffer, ppos, &target_pos, count, 0);
+    else if (block < EXT2_INO_UPPER_LEVEL1)
+      ext2_fs_bread_n_rec(inode->sb, ext2_inode->i_block[12], &p_buffer, ppos, &target_pos, count, 1);
+    else if (block < EXT2_INO_UPPER_LEVEL2)
+      ext2_fs_bread_n_rec(inode->sb, ext2_inode->i_block[13], &p_buffer, ppos, &target_pos, count, 2);
+    else if (block < EXT2_INO_UPPER_LEVEL3)
+      ext2_fs_bread_n_rec(inode->sb, ext2_inode->i_block[14], &p_buffer, ppos, &target_pos, count, 3);
+  }
+
+  file->pos = ppos + count;
+  return count;
 }
 
 struct vfs_type *ext2_fs_type_get()

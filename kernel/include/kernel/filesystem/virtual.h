@@ -98,7 +98,7 @@ struct vfs_file
 struct vfs_file_op
 {
   int (*open)(struct vfs_inode *inode, struct vfs_file *file);
-  ssize_t (*read)(struct vfs_file *file, char *buf, size_t count, loff_t ppos);
+  ssize_t (*read)(struct vfs_file *file, char *buffer, size_t count, loff_t ppos);
 };
 
 struct vfs_sb
