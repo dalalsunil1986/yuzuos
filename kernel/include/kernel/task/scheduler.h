@@ -4,6 +4,7 @@
 #include <kernel/memory/virtual.h>
 #include <kernel/utils/plist.h>
 #include <kernel/utils/types.h>
+#include <kernel/interrupts/handler.h>
 #include <kernel/system/limits.h>
 #include <stdint.h>
 
@@ -32,7 +33,8 @@ struct trap_frame
 enum thread_state
 {
   THREAD_READY,
-  THREAD_RUNNING
+  THREAD_RUNNING,
+  THREAD_TERMINATED
 };
 
 struct thread
@@ -44,6 +46,7 @@ struct thread
   uint32_t stack_user;
 
   enum thread_state state;
+  struct itr_registers registers;
   struct process *process;
   struct plist_node list;
 };
@@ -64,6 +67,7 @@ struct process_vm
   uint32_t start;
   uint32_t end;
 
+  struct vfs_file *file;
   struct process_mm *mm;
   struct dlist_head list;
 };
@@ -92,6 +96,7 @@ struct process
 
 void sched_init();
 void sched_schedule();
+void sched_exit(int code);
 void sched_load(const char *path);
 struct process *sched_process_get();
 struct thread *sched_thread_get();

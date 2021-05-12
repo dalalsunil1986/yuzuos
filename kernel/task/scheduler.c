@@ -271,6 +271,28 @@ int sched_handler(struct itr_registers *registers)
   return ITR_CONTINUE;
 }
 
+void sched_exit(int code)
+{
+  sched_lock();
+
+  struct process_vm *iter;
+  struct process_vm *next;
+  dlist_foreach_entry_safe(iter, next, &sched_process->mm->list, list)
+  {
+    if (!iter->file)
+      virt_mm_addr_range_unmap(sched_process->page_dir, iter->start, iter->end);
+
+    dlist_remove(&iter->list);
+    free(iter);
+  }
+
+  sched_thread_update(sched_thread, THREAD_TERMINATED);
+  virt_mm_addr_range_unmap(sched_process->page_dir, sched_thread->stack_user - SCHED_STACK_SIZE, sched_thread->stack_user);
+
+  sched_unlock();
+  sched_schedule();
+}
+
 void sched_init()
 {
   sched_locks = 0;
