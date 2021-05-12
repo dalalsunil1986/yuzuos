@@ -69,6 +69,36 @@ char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
   return buffer;
 }
 
+int virt_fs_getattr(struct vfs_mount *mnt, struct vfs_dentry *dentry, struct kstat *stat)
+{
+  struct vfs_inode *inode = dentry->inode;
+  if (inode->op->getattr)
+    return inode->op->getattr(mnt, dentry, stat);
+
+  stat->dev = inode->sb->dev;
+  stat->ino = inode->ino;
+  stat->mode = inode->mode;
+  stat->nlink = inode->nlink;
+  stat->uid = inode->uid;
+  stat->gid = inode->gid;
+  stat->rdev = inode->rdev;
+  stat->atim = inode->atime;
+  stat->mtim = inode->mtime;
+  stat->ctim = inode->ctime;
+  stat->size = inode->size;
+  stat->blocks = inode->blocks;
+  stat->blksize = inode->blksize;
+
+  if (!stat->blksize)
+  {
+    struct vfs_sb *sb = inode->sb;
+    uint32_t blocks = (stat->size + sb->blocksize - 1) >> sb->blocksize_bits;
+    stat->blocks = (sb->blocksize / VFS_BYTES_P_SECTOR) * blocks;
+    stat->blksize = sb->blocksize;
+  }
+  return 0;
+}
+
 void virt_fs_type_add(struct vfs_type *type)
 {
   dlist_add_tail(&type->list, &virt_fs_type_list);
