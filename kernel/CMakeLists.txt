@@ -26,6 +26,7 @@ set(C_SOURCES
   memory/gdt.c
   memory/physical.c
   memory/virtual.c
+  memory/mmap.c
   
   interrupts/idt.c
   interrupts/pic.c

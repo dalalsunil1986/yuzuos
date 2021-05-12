@@ -1,0 +1,124 @@
+#include <kernel/memory/mmap.h>
+#include <kernel/memory/virtual.h>
+#include <kernel/task/scheduler.h>
+#include <kernel/utils/math.h>
+#include <kernel/utils/log.h>
+#include <kernel/utils/stdlib.h>
+#include <kernel/utils/string.h>
+
+struct process_vm *mmap_find_unmapped_vm(uint32_t addr, uint32_t len)
+{
+  struct process_mm *mm = sched_process_get()->mm;
+  struct process_vm *vma = calloc(1, sizeof(struct process_vm));
+  vma->mm = mm;
+
+  if (!addr || addr < mm->brk_end)
+    addr = MAX(mm->cache, mm->brk_end);
+
+  len = PAGE_ALIGN(len);
+
+  uint32_t addr_found = addr;
+  if (dlist_is_empty(&mm->list))
+    dlist_add(&vma->list, &mm->list);
+  else
+  {
+    struct process_vm *iter = NULL;
+    dlist_foreach_entry(iter, &mm->list, list)
+    {
+      struct process_vm *next = dlist_entry_next(iter, list);
+      bool is_last = dlist_is_last(&iter->list, &mm->list);
+
+      if (addr + len <= iter->start)
+      {
+        dlist_add(&iter->list, &mm->list);
+        break;
+      }
+      else if (addr >= iter->end && (is_last || (!is_last && addr + len <= next->start)))
+      {
+        dlist_add(&vma->list, &iter->list);
+        break;
+      }
+      else if (!is_last && (iter->end <= addr && addr < next->start) && next->start - iter->end >= len)
+      {
+        dlist_add(&vma->list, &iter->list);
+        addr_found = next->start - len;
+        break;
+      }
+    }
+  }
+
+  if (addr_found)
+  {
+    vma->start = addr_found;
+    vma->end = addr_found + len;
+    mm->cache = vma->end;
+  }
+
+  return vma;
+}
+
+struct process_vm *mmap_find_vm(struct process_mm *mm, uint32_t addr)
+{
+  struct process_vm *iter = NULL;
+  dlist_foreach_entry(iter, &mm->list, list)
+  {
+    if (iter->start <= addr && addr < iter->end)
+      return iter;
+  }
+  return NULL;
+}
+
+int mmap_expand_vm(struct process_vm *vm, uint32_t address)
+{
+  address = PAGE_ALIGN(address);
+  if (address <= vm->end)
+    return 0;
+
+  if (dlist_is_last(&vm->list, &sched_process_get()->mm->list))
+    vm->end = address;
+  else
+  {
+    struct process_vm *next = dlist_entry_next(vm, list);
+    if (address <= next->start)
+      vm->end = address;
+    else
+    {
+      dlist_remove(&vm->list);
+
+      struct process_vm *vm_expand = mmap_find_unmapped_vm(0, address - vm->start);
+      memcpy(vm, vm_expand, sizeof(struct process_vm));
+      free(vm_expand);
+    }
+  }
+  return 0;
+}
+
+uint32_t mmap_map(uint32_t addr, size_t len, int fd)
+{
+  uint32_t addr_aligned = ALIGN_DOWN(addr, PHYS_MM_BLOCK);
+  struct vfs_file *process_file = fd >= 0 ? sched_process_get()->files->fd[fd] : NULL;
+  struct process_vm *vm = mmap_find_vm(sched_process_get()->mm, addr_aligned);
+
+  if (!vm)
+    vm = mmap_find_unmapped_vm(addr_aligned, len);
+  else if (vm->end < addr + len)
+    mmap_expand_vm(vm, addr + len);
+
+  if (process_file)
+  {
+    //FIXME implment file mmap
+    log_warn("MMap: FIXME implement file mmap\n");
+  }
+  else
+  {
+    uint32_t virtual = vm->start;
+    while (virtual < vm->end)
+    {
+      uint32_t physical = (uint32_t)phys_mm_block_alloc();
+      virt_mm_map_addr(sched_process_get()->page_dir, physical, virtual, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER);
+      virtual += PHYS_MM_BLOCK;
+    }
+  }
+
+  return addr ? addr : vm->start;
+}
