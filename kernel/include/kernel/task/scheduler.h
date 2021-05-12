@@ -1,8 +1,10 @@
 #pragma once
 
+#include <kernel/filesystem/virtual.h>
 #include <kernel/memory/virtual.h>
 #include <kernel/utils/plist.h>
 #include <kernel/utils/types.h>
+#include <kernel/system/limits.h>
 #include <stdint.h>
 
 #define SCHED_TIME_SLICE 8
@@ -44,6 +46,11 @@ struct thread
   struct plist_node list;
 };
 
+struct process_files
+{
+  struct vfs_file *fd[FD_MAX];
+};
+
 struct process_fs
 {
   struct vfs_dentry *root;
@@ -55,6 +62,7 @@ struct process
   pid_t pid;
 
   struct process_fs *fs;
+  struct process_files *files;
   struct thread *thread;
   struct process *parent;
   struct page_dir *page_dir;
