@@ -38,6 +38,12 @@
 
 #define OPEN_FMODE(flag) ((fmode_t)(((flag + 1) & O_ACCMODE) | (flag & FMODE_NONOTIFY)))
 
+struct nameidata
+{
+  struct vfs_dentry *dentry;
+  struct vfs_mount *mount;
+};
+
 struct vfs_dentry
 {
   const char *name;
