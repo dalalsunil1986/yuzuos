@@ -212,7 +212,7 @@ int sched_handler(struct itr_registers *registers)
 
   sched_unlock();
 
-  if (!sched_lock && can_sched)
+  if (!sched_locks && can_sched)
   {
     log_info("Scheduler: Thread round-robin, tid = %d\n", sched_thread->tid);
     sched_schedule();
