@@ -145,7 +145,7 @@ int virt_fs_path_find(const char *path, int flags, mode_t mode, struct nameidata
   else
     nameidata->dentry = sched_process_get()->fs->root;
 
-  char name[VFS_NAME_MAX];
+  char name[NAME_MAX];
   int length = strlen(path);
   while (i < length)
   {

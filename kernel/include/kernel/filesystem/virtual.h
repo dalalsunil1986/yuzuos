@@ -6,7 +6,6 @@
 #include <kernel/utils/stat.h>
 #include <stdint.h>
 
-#define VFS_NAME_MAX 256
 #define VFS_BYTES_P_SECTOR 512
 
 #define FMODE_READ ((fmode_t)0x1)
