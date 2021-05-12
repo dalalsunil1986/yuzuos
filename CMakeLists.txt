@@ -16,8 +16,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
-function(yuzuos_install_headers)
-  install(DIRECTORY include DESTINATION usr)
+function(yuzuos_install_headers path_name)
+  install(DIRECTORY include/${path_name} DESTINATION usr/include)
 endfunction()
 
 function(yuzuos_bin bin_name)

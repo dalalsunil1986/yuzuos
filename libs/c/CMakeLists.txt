@@ -6,7 +6,7 @@ set(C_SOURCES)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
-yuzuos_install_headers()
+yuzuos_install_headers("")
 add_library(libc ${SOURCES})
 install(TARGETS libc ARCHIVE DESTINATION usr/lib)
 set_target_properties(libc PROPERTIES OUTPUT_NAME c)
