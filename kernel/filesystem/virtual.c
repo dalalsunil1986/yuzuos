@@ -54,6 +54,16 @@ struct vfs_file *virt_fs_file_alloc()
   return file;
 }
 
+void virt_fs_inode_special_init(struct vfs_inode *inode, umode_t mode, dev_t dev)
+{
+  inode->mode = mode;
+  if (S_ISCHR(mode))
+  {
+    //FIXME implement chrdev file op
+    inode->rdev = dev;
+  }
+}
+
 char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
 {
   // FIXME better error handling
