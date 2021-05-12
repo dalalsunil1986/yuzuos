@@ -3,7 +3,9 @@
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/string.h>
 #include <kernel/utils/stat.h>
+#include <kernel/utils/errno.h>
 #include <kernel/system/sys.h>
+#include <kernel/system/limits.h>
 #include <kernel/memory/physical.h>
 #include <stddef.h>
 
@@ -135,6 +137,28 @@ struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_t
   mount->mount = dentry;
 
   return mount;
+}
+
+int ext2_fs_ino_find(struct vfs_sb *sb, uint32_t block, void *arg)
+{
+  const char *name = (const char *)arg;
+  char *buffer = ext2_fs_bread_block(sb, block);
+  uint32_t size = 0;
+  char name_tmp[NAME_MAX];
+
+  struct ext2_dir_entry *entry = (struct ext2_dir_entry *)buffer;
+  while (size < sb->blocksize)
+  {
+    memcpy(name_tmp, entry->name, entry->name_len);
+    name_tmp[entry->name_len] = 0;
+
+    if (!strcmp(name_tmp, name))
+      return entry->ino;
+
+    size = size + entry->rec_len;
+    entry = (struct ext2_dir_entry *)((char *)entry + entry->rec_len);
+  }
+  return -ENOENT;
 }
 
 struct vfs_type *ext2_fs_type_get()

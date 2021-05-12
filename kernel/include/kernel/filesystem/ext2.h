@@ -150,5 +150,14 @@ struct ext2_inode
   } osd2;
 };
 
+struct ext2_dir_entry
+{
+  uint32_t ino;
+  uint16_t rec_len;
+  uint8_t name_len;
+  uint8_t file_type;
+  char name[];
+};
+
 void ext2_fs_init();
 struct vfs_type *ext2_fs_type_get();
