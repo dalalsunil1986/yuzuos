@@ -64,6 +64,29 @@ void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual,
   tbl_flush_entry(virtual);
 }
 
+void virt_mm_addr_unmap(struct page_dir *dir, uint32_t virtual)
+{
+  if (virtual != PAGE_ALIGN(virtual))
+    log_warn("Virtual MM: Virtual addr = 0x%x, not page aligned\n", virtual);
+
+  if (!PAGE_IS_ENABLED(dir->entries[PAGE_DIR_INDEX(virtual)]))
+    return;
+
+  struct page_tbl *tbl = (struct page_tbl *)(PAGE_TBL_BASE + PAGE_DIR_INDEX(virtual) * PHYS_MM_BLOCK);
+  uint32_t index = PAGE_TBL_INDEX(virtual);
+  if (!PAGE_IS_ENABLED(tbl->entries[index]))
+    return;
+
+  tbl->entries[index] = 0;
+  tbl_flush_entry(virtual);
+}
+
+void virt_mm_addr_range_unmap(struct page_dir *dir, uint32_t start, uint32_t end)
+{
+  for (uint32_t addr = start; addr < end; addr += PHYS_MM_BLOCK)
+    virt_mm_addr_unmap(dir, addr);
+}
+
 void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
 {
   struct page_tbl *tbl = (struct page_tbl *)phys_mm_block_alloc();
