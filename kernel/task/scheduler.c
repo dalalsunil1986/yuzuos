@@ -120,6 +120,22 @@ struct thread *sched_thread_create(const char *path, struct process *process)
   return thread;
 }
 
+struct process_files *sched_process_clone_files(struct process *parent)
+{
+  struct process_files *files = calloc(1, sizeof(struct process_files));
+  if (parent)
+    memcpy(files, parent->files, sizeof(struct process_files));
+  return files;
+}
+
+struct process_fs *sched_process_clone_fs(struct process *parent)
+{
+  struct process_fs *fs = calloc(1, sizeof(struct process_fs));
+  if (parent)
+    memcpy(fs, parent->fs, sizeof(struct process_fs));
+  return fs;
+}
+
 struct process *sched_process_create(struct process *parent)
 {
   sched_lock();
@@ -128,6 +144,8 @@ struct process *sched_process_create(struct process *parent)
   process->pid = sched_pid++;
   process->page_dir = parent ? virt_mm_addr_create(parent->page_dir) : virt_mm_dir_get();
   process->parent = parent;
+  process->fs = sched_process_clone_fs(parent);
+  process->files = sched_process_clone_files(parent);
 
   sched_unlock();
 
