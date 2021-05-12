@@ -1,7 +1,9 @@
+#include <stdlib.h>
+
 extern int main(int argc, char *argv[], char *envp[]);
 
 void _start(int argc, char *argv[], char *envp[])
 {
-  int code = main(argc, argv, envp);
-  // exit(code);
+  int status = main(argc, argv, envp);
+  exit(status);
 }
