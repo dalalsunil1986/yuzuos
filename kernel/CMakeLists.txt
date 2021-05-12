@@ -9,6 +9,7 @@ set(ASM_SOURCES
   interrupts/irq.S
   interrupts/isr.S
   
+  task/sched_switch.S
   task/tss_flush.S)
 
 set(C_SOURCES
@@ -47,6 +48,7 @@ set(C_SOURCES
   filesystem/virtual.c
   filesystem/ext2.c
   
+  task/scheduler.c
   task/tss.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
