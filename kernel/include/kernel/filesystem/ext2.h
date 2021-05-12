@@ -4,6 +4,13 @@
 
 #define EXT2_SUPER_MAGIC 0xEF53
 
+#define EXT2_INO_UPPER_LEVEL0 12
+#define EXT2_INO_UPPER_LEVEL1 268
+#define EXT2_INO_UPPER_LEVEL2 65804
+#define EXT2_INO_UPPER_LEVEL3 16843020
+
+#define EXT2_INO_FIND(sb, level, block, value) (ext2_fs_bread_rec(sb, level, block, value, ext2_fs_ino_find))
+
 #define EXT2_BAD_INO 1
 #define EXT2_ROOT_INO 2
 #define EXT2_BOOT_LOADER_INO 5

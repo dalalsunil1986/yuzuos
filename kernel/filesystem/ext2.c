@@ -12,6 +12,7 @@
 struct vfs_mount *ext2_fs_mount(const char *name, const char *path, struct vfs_type *type);
 struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb);
 void ext2_fs_inode_read(struct vfs_inode *inode);
+struct vfs_inode *ext2_fs_lookup(struct vfs_inode *dir, struct vfs_dentry *dentry);
 
 static struct vfs_type ext2_fs_type = {
     .name = "ext2",
@@ -21,7 +22,8 @@ static struct vfs_file_op ext2_fs_file_op = {};
 static struct vfs_inode_op ext2_fs_file_inode_op = {};
 
 static struct vfs_file_op ext2_fs_dir_op = {};
-static struct vfs_inode_op ext2_fs_dir_inode_op = {};
+static struct vfs_inode_op ext2_fs_dir_inode_op = {
+    .lookup = ext2_fs_lookup};
 
 static struct vfs_inode_op ext2_fs_special_inode_op = {};
 
@@ -176,6 +178,30 @@ int ext2_fs_bread_rec(struct vfs_sb *sb, int level, uint32_t block, const void *
   }
   else
     return action(sb, block, value);
+}
+
+struct vfs_inode *ext2_fs_lookup(struct vfs_inode *dir, struct vfs_dentry *dentry)
+{
+  struct ext2_inode *ext2_inode = dir->info;
+  struct vfs_sb *sb = dir->sb;
+
+  for (uint32_t i = 0, ino = 0; i < ext2_inode->i_blocks; i++)
+  {
+    if (!ext2_inode->i_block[i])
+      continue;
+
+    if ((i < EXT2_INO_UPPER_LEVEL0 && (ino = EXT2_INO_FIND(sb, 0, ext2_inode->i_block[i], dentry->name)) > 0) ||
+        ((EXT2_INO_UPPER_LEVEL0 <= i && i < EXT2_INO_UPPER_LEVEL1) && (ino = EXT2_INO_FIND(sb, 1, ext2_inode->i_block[12], dentry->name)) > 0) ||
+        ((EXT2_INO_UPPER_LEVEL1 <= i && i < EXT2_INO_UPPER_LEVEL2) && (ino = EXT2_INO_FIND(sb, 2, ext2_inode->i_block[13], dentry->name)) > 0) ||
+        ((EXT2_INO_UPPER_LEVEL2 <= i && i < EXT2_INO_UPPER_LEVEL3) && (ino = EXT2_INO_FIND(sb, 3, ext2_inode->i_block[14], dentry->name)) > 0))
+    {
+      struct vfs_inode *inode = dir->sb->sop->inode_alloc(dir->sb);
+      inode->ino = ino;
+      ext2_fs_inode_read(inode);
+      return inode;
+    }
+  }
+  return NULL;
 }
 
 struct vfs_type *ext2_fs_type_get()
