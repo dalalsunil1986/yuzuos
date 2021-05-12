@@ -2,7 +2,8 @@ set(ASM_SOURCES
   crti.S
   crtn.S)
 
-set(C_SOURCES)
+set(C_SOURCES
+  stdlib.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 

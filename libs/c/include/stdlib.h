@@ -6,3 +6,4 @@ int atoi(const char *);
 void free(void *);
 char *getenv(const char *);
 void *malloc(size_t);
+void exit(int status);
