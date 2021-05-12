@@ -33,6 +33,24 @@ struct vfs_inode
   struct vfs_sb *sb;
 };
 
+struct vfs_file
+{
+  uint32_t flags;
+  size_t max_count;
+  fmode_t mode;
+  loff_t pos;
+
+  struct vfs_file_op *op;
+  struct vfs_dentry *dentry;
+  struct vfs_mount *mount;
+};
+
+struct vfs_file_op
+{
+  int (*open)(struct vfs_inode *inode, struct vfs_file *file);
+  ssize_t (*read)(struct vfs_file *file, char *buf, size_t count, loff_t ppos);
+};
+
 struct vfs_sb
 {
   const char *devname;
