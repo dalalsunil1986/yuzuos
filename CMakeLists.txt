@@ -52,6 +52,7 @@ add_custom_target(run
 
 include_directories(kernel/include)
 include_directories(libs/c/include)
+include_directories(libs/utils/include)
 
 add_subdirectory(kernel)
 add_subdirectory(libs)
