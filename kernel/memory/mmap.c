@@ -122,3 +122,58 @@ uint32_t mmap_map(uint32_t addr, size_t len, int fd)
 
   return addr ? addr : vm->start;
 }
+
+uint32_t mmap_brk(uint32_t addr, size_t len)
+{
+  struct process_mm *mm = sched_process_get()->mm;
+  struct process_vm *vm = mmap_find_vm(mm, addr);
+  uint32_t new_brk = PAGE_ALIGN(addr + len);
+  mm->brk = new_brk;
+
+  if (!vm || vm->end >= new_brk)
+    return 0;
+
+  struct process_vm *new_vm = calloc(1, sizeof(struct process_vm));
+  memcpy(new_vm, vm, sizeof(struct process_vm));
+
+  if (new_brk > mm->brk)
+    mmap_expand_vm(new_vm, new_brk);
+  else
+    new_vm->end = new_brk;
+
+  if (vm->file)
+  {
+    //FIXME implment file mmap
+    log_warn("MMap: FIXME implement file mmap\n");
+  }
+  else
+  {
+    if (new_vm->end > vm->end)
+    {
+      uint32_t frames = (new_vm->end - vm->end) / PHYS_MM_BLOCK;
+      uint32_t physical = (uint32_t)phys_mm_block_n_alloc(frames);
+      uint32_t virtual = vm->end;
+
+      while (virtual < new_vm->end)
+      {
+        virt_mm_map_addr(sched_process_get()->page_dir, physical, virtual, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER);
+
+        virtual += PHYS_MM_BLOCK;
+        physical += PHYS_MM_BLOCK;
+      }
+    }
+    else if (new_vm->end < vm->end)
+    {
+      uint32_t virtual = new_vm->end;
+      while (addr < vm->end)
+      {
+        virtual += PHYS_MM_BLOCK;
+      }
+    }
+    for (uint32_t addr = new_vm->end; addr < vm->end; addr += PHYS_MM_BLOCK)
+      virt_mm_addr_unmap(sched_process_get()->page_dir, addr);
+  }
+  memcpy(vm, new_vm, sizeof(struct process_vm));
+
+  return 0;
+}
