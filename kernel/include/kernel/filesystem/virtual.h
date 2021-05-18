@@ -146,3 +146,4 @@ struct vfs_dentry *virt_fs_dentry_alloc(const char *name, struct vfs_dentry *par
 char *virt_fs_read(const char *path);
 void virt_fs_inode_special_init(struct vfs_inode *inode, umode_t mode, dev_t dev);
 int virt_fs_fstat(int fd, struct stat *stat);
+ssize_t virt_fs_fread(int fd, char *buffer, size_t count);

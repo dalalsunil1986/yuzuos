@@ -40,8 +40,14 @@ int syscall_brk(void *addr)
   return mmap_brk(mm->brk_start, brk - mm->brk_start);
 }
 
+ssize_t syscall_read(int fd, void *buf, size_t count)
+{
+  return virt_fs_fread(fd, buf, count);
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
+    [__NR_read] = syscall_read,
     [__NR_open] = syscall_open,
     [__NR_brk] = syscall_brk,
     [__NR_fstat] = syscall_fstat,
