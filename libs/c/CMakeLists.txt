@@ -8,6 +8,7 @@ set(C_SOURCES
   errno.c
   stdio.c
   string.c
+  unistd.c
   
   sys/stat.c)
 
