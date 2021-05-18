@@ -4,7 +4,8 @@ set(ASM_SOURCES
 
 set(C_SOURCES
   stdlib.c
-  fcntl.c)
+  fcntl.c
+  errno.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
