@@ -25,6 +25,13 @@ function(yuzuos_bin bin_name)
   install(TARGETS ${bin_name} RUNTIME DESTINATION bin)
 endfunction()
 
+function(yuzuos_lib lib_name bin_name)
+  yuzuos_install_headers(${bin_name})
+  add_library(${lib_name} ${SOURCES})
+  install(TARGETS ${lib_name} DESTINATION usr/lib)
+  set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME ${bin_name})
+endfunction()
+
 add_custom_target(toolchain
   COMMAND ${CMAKE_COMMAND} -E env "SYSROOT_DIR=${CMAKE_SYSROOT}" "SOURCE_DIR=${CMAKE_SOURCE_DIR}" ${CMAKE_SOURCE_DIR}/tools/setup-toolchain.sh
   USES_TERMINAL)
