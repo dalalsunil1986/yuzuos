@@ -398,3 +398,8 @@ int sprintf(char *str, const char *format, ...)
   va_end(ap);
   return len;
 }
+
+int vsprintf(char *str, const char *format, va_list arg)
+{
+  return vsnprintf(str, INT_MAX, format, arg);
+}

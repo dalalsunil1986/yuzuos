@@ -31,5 +31,6 @@ long ftell(FILE *);
 size_t fwrite(const void *, size_t, size_t, FILE *);
 void setbuf(FILE *, char *);
 int vfprintf(FILE *, const char *, va_list);
+int vsprintf(char *str, const char *format, va_list arg);
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 int sprintf(char *str, const char *format, ...);
