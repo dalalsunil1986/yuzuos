@@ -8,6 +8,7 @@ static char buffer[LOG_BUF];
 _syscall2(log, const char *, int);
 void log_log(enum log_type type, const char *file, int line, const char *format, ...)
 {
+  (void)type;
   (void)file;
   (void)line;
   va_list ap;
