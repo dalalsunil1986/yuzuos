@@ -1,8 +1,12 @@
 #pragma once
 
+#define INI_FAILURE -1
+#define INI_SUCCESS 0
+
 #define INI_SECTION_MAX 50
 #define INI_NAME_MAX 50
 #define INI_LINE_MAX 200
+
 #define INI_START_COMMENT ";#"
 #define INI_INLINE_COMMENT ";"
 
