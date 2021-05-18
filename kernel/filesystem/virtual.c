@@ -81,32 +81,32 @@ char *virt_fs_bread(const char *devname, sector_t sector, uint32_t size)
   return buffer;
 }
 
-int virt_fs_getattr(struct vfs_mount *mnt, struct vfs_dentry *dentry, struct kstat *stat)
+int virt_fs_getattr(struct vfs_mount *mnt, struct vfs_dentry *dentry, struct stat *stat)
 {
   struct vfs_inode *inode = dentry->inode;
   if (inode->op->getattr)
     return inode->op->getattr(mnt, dentry, stat);
 
-  stat->dev = inode->sb->dev;
-  stat->ino = inode->ino;
-  stat->mode = inode->mode;
-  stat->nlink = inode->nlink;
-  stat->uid = inode->uid;
-  stat->gid = inode->gid;
-  stat->rdev = inode->rdev;
-  stat->atim = inode->atime;
-  stat->mtim = inode->mtime;
-  stat->ctim = inode->ctime;
-  stat->size = inode->size;
-  stat->blocks = inode->blocks;
-  stat->blksize = inode->blksize;
+  stat->st_dev = inode->sb->dev;
+  stat->st_ino = inode->ino;
+  stat->st_mode = inode->mode;
+  stat->st_nlink = inode->nlink;
+  stat->st_uid = inode->uid;
+  stat->st_gid = inode->gid;
+  stat->st_rdev = inode->rdev;
+  stat->st_atim = inode->atime;
+  stat->st_mtim = inode->mtime;
+  stat->st_ctim = inode->ctime;
+  stat->st_size = inode->size;
+  stat->st_blocks = inode->blocks;
+  stat->st_blksize = inode->blksize;
 
-  if (!stat->blksize)
+  if (!stat->st_blksize)
   {
     struct vfs_sb *sb = inode->sb;
-    uint32_t blocks = (stat->size + sb->blocksize - 1) >> sb->blocksize_bits;
-    stat->blocks = (sb->blocksize / VFS_BYTES_P_SECTOR) * blocks;
-    stat->blksize = sb->blocksize;
+    uint32_t blocks = (stat->st_size + sb->blocksize - 1) >> sb->blocksize_bits;
+    stat->st_blocks = (sb->blocksize / VFS_BYTES_P_SECTOR) * blocks;
+    stat->st_blksize = sb->blocksize;
   }
   return 0;
 }
@@ -119,7 +119,7 @@ int virt_fs_fd_find(int limit)
   return -EINVAL;
 }
 
-int virt_fs_fstat(int fd, struct kstat *stat)
+int virt_fs_fstat(int fd, struct stat *stat)
 {
   if (fd < 0)
     return -EBADF;
@@ -269,18 +269,18 @@ char *virt_fs_read(const char *path)
   if (fd < 0)
     return NULL;
 
-  struct kstat *stat = calloc(1, sizeof(struct kstat));
+  struct stat *stat = calloc(1, sizeof(struct stat));
   if (!stat)
     return NULL;
 
   if (virt_fs_fstat(fd, stat) < 0)
     return NULL;
 
-  char *buffer = calloc(stat->size, sizeof(char));
+  char *buffer = calloc(stat->st_size, sizeof(char));
   if (!buffer)
     return NULL;
 
-  if (virt_fs_fread(fd, buffer, stat->size) < 0)
+  if (virt_fs_fread(fd, buffer, stat->st_size) < 0)
     return NULL;
 
   return buffer;

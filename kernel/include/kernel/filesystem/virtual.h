@@ -58,7 +58,7 @@ struct vfs_inode_op
 {
   struct vfs_inode *(*lookup)(struct vfs_inode *dir, struct vfs_dentry *dentry);
   struct vfs_inode *(*create)(struct vfs_inode *dir, struct vfs_dentry *dentry, mode_t mode);
-  int (*getattr)(struct vfs_mount *mount, struct vfs_dentry *dentry, struct kstat *kstat);
+  int (*getattr)(struct vfs_mount *mount, struct vfs_dentry *dentry, struct stat *kstat);
 };
 
 struct vfs_inode
