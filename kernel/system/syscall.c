@@ -15,9 +15,15 @@ int syscall_open(const char *path, int flags, mode_t mode)
   return virt_fs_open(path, flags, mode);
 }
 
+void syscall_log(const char *buffer, int len)
+{
+  log_write(buffer, len);
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
-    [__NR_open] = syscall_open};
+    [__NR_open] = syscall_open,
+    [__NR_log] = syscall_log};
 
 int syscall_handler(struct itr_registers *registers)
 {

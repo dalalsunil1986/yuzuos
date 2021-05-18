@@ -16,3 +16,4 @@ enum log_type
 
 void log_init();
 void log_log(enum log_type type, const char *file, int line, const char *format, ...);
+void log_write(const char *buffer, int len);
