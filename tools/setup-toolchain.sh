@@ -34,7 +34,7 @@ function cleanup {
 trap cleanup EXIT
 
 mkdir -pv $BUILD_DIR $CACHE_DIR $CROSS_DIR
-mkdir -pv $SYSROOT_DIR $SYSROOT_DIR/usr/include
+mkdir -pv $SYSROOT_DIR $SYSROOT_DIR/usr/include/ukernel
 
 if [ "$TOOLCHAIN_CACHE" = "yes" ] ; then
   if [ -r "$CACHE_DIR/$CACHE_FILE" ] ; then
@@ -57,8 +57,8 @@ if [ "$TOOLCHAIN_CACHE" = "yes" ] ; then
   fi
 fi
 
-cp -RT $SOURCE_DIR/libs/c/include $SYSROOT_DIR/usr/include
-cp -RT $SOURCE_DIR/kernel/include/ukernel $SYSROOT_DIR/usr/include
+cp -r $SOURCE_DIR/libs/c/include/* $SYSROOT_DIR/usr/include
+cp -r $SOURCE_DIR/kernel/include/ukernel/* $SYSROOT_DIR/usr/include/ukernel
 
 cd $CACHE_DIR
 wget -nc $MIRROR/binutils/$BINUTILS
