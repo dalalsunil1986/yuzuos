@@ -58,6 +58,7 @@ if [ "$TOOLCHAIN_CACHE" = "yes" ] ; then
 fi
 
 cp -RT $SOURCE_DIR/libs/c/include $SYSROOT_DIR/usr/include
+cp -RT $SOURCE_DIR/kernel/include/ukernel $SYSROOT_DIR/usr/include
 
 cd $CACHE_DIR
 wget -nc $MIRROR/binutils/$BINUTILS
