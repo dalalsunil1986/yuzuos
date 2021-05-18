@@ -26,3 +26,14 @@ size_t strlen(const char *str)
     len++;
   return len;
 }
+
+char *strchr(const char *str, int c)
+{
+  do
+  {
+    if (*str == c)
+      return (char *)str;
+  } while (*str++);
+
+  return (0);
+}
