@@ -7,6 +7,7 @@ set(C_SOURCES
   fcntl.c
   errno.c
   stdio.c
+  string.c
   
   sys/stat.c)
 
