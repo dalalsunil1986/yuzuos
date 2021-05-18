@@ -6,7 +6,9 @@ set(C_SOURCES
   stdlib.c
   fcntl.c
   errno.c
-  stdio.c)
+  stdio.c
+  
+  sys/stat.c)
 
 set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
 
