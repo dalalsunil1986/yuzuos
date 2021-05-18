@@ -1,3 +1,3 @@
 #pragma once
 
-#define INT_MAX ((int)(~0U >> 1))
+#define INT_MAX __INT_MAX__
