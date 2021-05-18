@@ -20,6 +20,7 @@ fail() {
 export -f fail
 
 [ -z "$SOURCE_DIR" ] && fail "SOURCE_DIR is not defined"
+[ -d "$SOURCE_DIR/base" ] || fail "$SOURCE_DIR/base not found"
 
 if [ "$(id -u)" != 0 ]; then
   exec sudo -E -- "$0" "$@" || fail "Need root privileges"

@@ -1,8 +1,6 @@
 #!/bin/bash
 
 [ -z "$MOUNT_DIR" ] && fail "MOUNT_DIR is not defined"
-[ -z "$SOURCE_DIR" ] && fail "SOURCE_DIR is not defined"
-[ -d "$SOURCE_DIR/base" ] || fail "$SOURCE_DIR/base not found"
 
 echo "SetupFileSystem: Base system"
 if command -v rsync >/dev/null; then
