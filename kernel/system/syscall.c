@@ -3,6 +3,8 @@
 #include <kernel/interrupts/isr.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
+#include <kernel/utils/errno.h>
+#include <kernel/memory/mmap.h>
 #include <kernel/filesystem/virtual.h>
 
 void syscall_exit(int32_t code)
@@ -25,9 +27,23 @@ int syscall_fstat(int fildes, struct stat *stat)
   return virt_fs_fstat(fildes, stat);
 }
 
+int syscall_brk(void *addr)
+{
+  uint32_t brk = (uint32_t)addr;
+  if (brk == 0)
+    return sched_process_get()->mm->brk;
+
+  struct process_mm *mm = sched_process_get()->mm;
+  if (brk < mm->brk_start)
+    return -EINVAL;
+
+  return mmap_brk(mm->brk_start, brk - mm->brk_start);
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
     [__NR_open] = syscall_open,
+    [__NR_brk] = syscall_brk,
     [__NR_fstat] = syscall_fstat,
     [__NR_log] = syscall_log};
 
