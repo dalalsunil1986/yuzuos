@@ -3,14 +3,21 @@
 #include <kernel/interrupts/isr.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
+#include <kernel/filesystem/virtual.h>
 
 void syscall_exit(int32_t code)
 {
   sched_exit(code);
 }
 
+int syscall_open(const char *path, int flags, mode_t mode)
+{
+  return virt_fs_open(path, flags, mode);
+}
+
 static void *syscalls[] = {
-    [__NR_exit] = syscall_exit};
+    [__NR_exit] = syscall_exit,
+    [__NR_open] = syscall_open};
 
 int syscall_handler(struct itr_registers *registers)
 {
