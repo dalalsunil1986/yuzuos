@@ -7,7 +7,7 @@ image_size() {
   expr "$(du -sk "$1" | cut -f1)" / 1024
 }
 
-IMAGE_SIZE=$(($(image_size sysroot) + 100))
+IMAGE_SIZE=$(($(image_size sysroot) + $(image_size $SOURCE_DIR/base) + 100))
 IMAGE_SIZE=${IMAGE_SIZE:-600}
 IMAGE_SIZE_BYTES=$((IMAGE_SIZE * 1024 * 1024))
 IMAGE_FILE=qemu_img
