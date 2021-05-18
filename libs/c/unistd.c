@@ -13,3 +13,9 @@ void *sbrk(intptr_t increment)
   brk((void *)current_brk + increment);
   return (void *)current_brk;
 }
+
+_syscall3(read, int, void *, size_t);
+ssize_t read(int fd, void *buf, size_t count)
+{
+  return syscall_read(fd, buf, count);
+}
