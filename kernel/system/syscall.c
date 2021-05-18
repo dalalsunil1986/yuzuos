@@ -20,9 +20,15 @@ void syscall_log(const char *buffer, int len)
   log_write(buffer, len);
 }
 
+int syscall_fstat(int fildes, struct stat *stat)
+{
+  return virt_fs_fstat(fildes, stat);
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
     [__NR_open] = syscall_open,
+    [__NR_fstat] = syscall_fstat,
     [__NR_log] = syscall_log};
 
 int syscall_handler(struct itr_registers *registers)
