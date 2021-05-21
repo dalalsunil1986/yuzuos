@@ -55,3 +55,14 @@ char *strncpy(char *dest, const char *src, size_t n)
     memset(dest + size, '\0', n - size);
   return memcpy(dest, src, size);
 }
+
+char *strcpy(char *restrict s1, const char *restrict s2)
+{
+  return memcpy(s1, s2, strlen(s2) + 1);
+}
+
+char *strcat(char *restrict s1, const char *restrict s2)
+{
+  strcpy(s1 + strlen(s1), s2);
+  return s1;
+}
