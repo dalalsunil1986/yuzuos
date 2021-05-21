@@ -30,10 +30,11 @@ int syscall_fstat(int fildes, struct stat *stat)
 int syscall_brk(void *addr)
 {
   uint32_t brk = (uint32_t)addr;
-  if (brk == 0)
-    return sched_process_get()->mm->brk;
-
   struct process_mm *mm = sched_process_get()->mm;
+
+  if (brk == 0)
+    return mm->brk;
+
   if (brk < mm->brk_start)
     return -EINVAL;
 
