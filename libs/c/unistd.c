@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <syscall.h>
 
+char **environ;
+
 _syscall1(brk, void *);
 int brk(void *addr)
 {
