@@ -24,3 +24,4 @@ char *getenv(const char *);
 void *malloc(size_t size);
 void *calloc(size_t nitems, size_t size);
 void exit(int status);
+char *getenv(const char *name);

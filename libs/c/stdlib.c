@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <utils/log.h>
 
+#define ENV_HOLE (char *)0xcc00
+
 static struct malloc_block *malloc_blocks;
 static uint32_t malloc_current = 0;
 static uint32_t malloc_remaining = 0;
@@ -115,4 +117,49 @@ void free(void *ptr)
 {
   struct malloc_block *block = (struct malloc_block *)ptr - 1;
   block->free = true;
+}
+
+bool envname_is_valid(const char *envname)
+{
+  if (!envname)
+    return false;
+
+  for (int i = 0, length = strlen(envname); i < length; i++)
+    if (envname[i] == '=')
+      return false;
+  return true;
+}
+
+int pointers_array_count(void *arr)
+{
+  if (!arr)
+    return 0;
+
+  const int *a = arr;
+  while (*a)
+    a++;
+
+  return a - (int *)arr;
+}
+
+char *getenv(const char *name)
+{
+  if (!envname_is_valid(name))
+    return errno = EINVAL, NULL;
+
+  for (int i = 0, env_length = pointers_array_count(environ); i < env_length; i++)
+  {
+    char *env = environ[i];
+    if (env == ENV_HOLE)
+      continue;
+
+    for (int j = 0; env[j]; j++)
+    {
+      if (env[j] == '=')
+        return name[j] == 0 ? env + j + 1 : NULL;
+      else if (env[j] != name[i])
+        break;
+    }
+  }
+  return NULL;
 }
