@@ -17,27 +17,7 @@ void malloc_assert(struct malloc_block *block)
 
 struct malloc_block *malloc_get(struct malloc_block *last, size_t size)
 {
-  struct malloc_block *block;
-  size_t increment = size + sizeof(struct malloc_block);
-  if (increment == 0)
-    block = (struct malloc_block *)malloc_current;
-
-  char *base = (char *)malloc_current;
-
-  if (increment <= malloc_remaining)
-    malloc_remaining -= increment;
-  else
-  {
-    uint32_t phyiscal_addr = (uint32_t)phys_mm_block_n_alloc(DIV_CEIL(increment - malloc_remaining, PHYS_MM_BLOCK));
-    uint32_t page_addr = DIV_CEIL(malloc_current, PHYS_MM_BLOCK) * PHYS_MM_BLOCK;
-    for (; page_addr < malloc_current + increment; page_addr += PHYS_MM_BLOCK, phyiscal_addr += PHYS_MM_BLOCK)
-      virt_mm_map_addr(virt_mm_dir_get(), phyiscal_addr, page_addr, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE);
-    malloc_remaining = page_addr - (malloc_current + increment);
-  }
-
-  malloc_current += increment;
-  memset(base, 0, increment);
-  block = (struct malloc_block *)base;
+  struct malloc_block *block = malloc_sbrk(size + sizeof(struct malloc_block));
 
   if (last)
     last->next = block;
@@ -50,7 +30,7 @@ struct malloc_block *malloc_get(struct malloc_block *last, size_t size)
 
 void *malloc_align(size_t size)
 {
-  uint32_t addr = malloc_current;
+  uint32_t addr = (uint32_t)malloc_sbrk(0);
   if (addr % size == 0)
     return NULL;
 
@@ -70,6 +50,34 @@ void *malloc_align(size_t size)
     padding += size;
   }
   return NULL;
+}
+
+void *malloc_sbrk(uint32_t increment)
+{
+  if (increment == 0)
+    return (char *)malloc_current;
+
+  char *base = (char *)malloc_current;
+
+  if (increment <= malloc_remaining)
+    malloc_remaining -= increment;
+  else
+  {
+    uint32_t physical_addr = (uint32_t)phys_mm_block_n_alloc(DIV_CEIL(increment - malloc_remaining, PHYS_MM_BLOCK));
+    uint32_t virtual_addr = DIV_CEIL(malloc_current, PHYS_MM_BLOCK) * PHYS_MM_BLOCK;
+
+    while (virtual_addr < malloc_current + increment)
+    {
+      virt_mm_map_addr(virt_mm_dir_get(), physical_addr, virtual_addr, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE);
+      virtual_addr += PHYS_MM_BLOCK;
+      physical_addr += PHYS_MM_BLOCK;
+    }
+    malloc_remaining = virtual_addr - (malloc_current + increment);
+  }
+
+  malloc_current += increment;
+  memset(base, 0, increment);
+  return base;
 }
 
 void *malloc(size_t size)
