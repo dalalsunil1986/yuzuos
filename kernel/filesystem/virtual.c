@@ -309,6 +309,7 @@ void virt_fs_init()
   dlist_head_init(&virt_fs_mount_list);
   dlist_head_init(&virt_fs_type_list);
 
+  ext2_fs_init();
   virt_fs_mount_root("/dev/hda", ext2_fs_type_get());
 
   log_info("Virtual FS: Initialized\n");
