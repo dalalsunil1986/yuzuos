@@ -398,3 +398,13 @@ int sprintf(char *str, const char *format, ...)
   va_end(ap);
   return len;
 }
+
+int snprintf(char *str, size_t size, const char *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int len = vsnprintf(str, size, format, args);
+  va_end(args);
+
+  return len;
+}
