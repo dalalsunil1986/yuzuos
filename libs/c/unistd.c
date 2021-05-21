@@ -21,3 +21,9 @@ ssize_t read(int fd, void *buf, size_t count)
 {
   return syscall_read(fd, buf, count);
 }
+
+_syscall0(fork);
+pid_t fork(void)
+{
+  return syscall_fork();
+}
