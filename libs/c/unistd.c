@@ -11,7 +11,7 @@ char **environ;
 _syscall1(brk, void *);
 int brk(void *addr)
 {
-  return syscall_brk(addr);
+  SYSCALL_RETURN(syscall_brk(addr));
 }
 
 void *sbrk(intptr_t increment)
@@ -24,7 +24,7 @@ void *sbrk(intptr_t increment)
 _syscall3(read, int, void *, size_t);
 ssize_t read(int fd, void *buf, size_t count)
 {
-  return syscall_read(fd, buf, count);
+  SYSCALL_RETURN(syscall_read(fd, buf, count));
 }
 
 size_t confstr(int name, char *buf, size_t len)
@@ -119,7 +119,7 @@ int execv(const char *pathname, char *const argv[])
 _syscall3(execve, const char *, char *const *, char *const *);
 int execve(const char *pathname, char *const argv[], char *const envp[])
 {
-  return syscall_execve(pathname, argv, envp);
+  SYSCALL_RETURN(syscall_execve(pathname, argv, envp));
 }
 
 int execvp(const char *file, char *const argv[])
@@ -185,5 +185,5 @@ int execvpe(const char *file, char *const argv[], char *const envp[])
 _syscall0(fork);
 pid_t fork(void)
 {
-  return syscall_fork();
+  SYSCALL_RETURN(syscall_fork());
 }

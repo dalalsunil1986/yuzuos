@@ -10,5 +10,5 @@ int stat(const char *restrict path, struct stat *restrict buf)
 _syscall2(fstat, int, struct stat *);
 int fstat(int fildes, struct stat *stat)
 {
-  return syscall_fstat(fildes, stat);
+  SYSCALL_RETURN(syscall_fstat(fildes, stat));
 }

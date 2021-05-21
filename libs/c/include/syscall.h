@@ -1,6 +1,15 @@
 #pragma once
 
 #include <ukernel/syscall.h>
+#include <errno.h>
+
+#define SYSCALL_RETURN(expr) (      \
+    {                               \
+      int result = expr;            \
+      if (result < 0)               \
+        return errno = -result, -1; \
+      return result;                \
+    })
 
 #define _syscall0(name)               \
   static inline int syscall_##name()  \
