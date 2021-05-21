@@ -59,7 +59,10 @@ int syscall_handler(struct itr_registers *registers)
   int index = registers->eax;
   uint32_t (*handler)(unsigned int, ...) = syscalls[index];
   if (!handler)
+  {
+    log_warn("Syscall: Unhandled syscall id = %d\n", index);
     return ITR_STOP;
+  }
 
   memcpy(&sched_thread_get()->registers, registers, sizeof(struct itr_registers));
   uint32_t result = handler(registers->ebx, registers->ecx, registers->edx, registers->esi, registers->edi);
