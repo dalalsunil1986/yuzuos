@@ -167,11 +167,10 @@ uint32_t mmap_brk(uint32_t addr, size_t len)
       uint32_t virtual = new_vm->end;
       while (addr < vm->end)
       {
+        virt_mm_addr_unmap(sched_process_get()->page_dir, virtual);
         virtual += PHYS_MM_BLOCK;
       }
     }
-    for (uint32_t addr = new_vm->end; addr < vm->end; addr += PHYS_MM_BLOCK)
-      virt_mm_addr_unmap(sched_process_get()->page_dir, addr);
   }
   memcpy(vm, new_vm, sizeof(struct process_vm));
 
