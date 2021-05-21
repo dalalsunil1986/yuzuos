@@ -22,7 +22,7 @@ void phys_mm_addr_set(uint32_t addr)
 
 void *phys_mm_block_n_alloc(uint32_t len)
 {
-  if (phys_mm_bitmap_used - phys_mm_bitmap_max <= 0 || phys_mm_bitmap_max - phys_mm_bitmap_used <= len)
+  if (phys_mm_bitmap_max - phys_mm_bitmap_used < len)
     return NULL;
 
   uint32_t bit = bitmap_get_n_first(phys_mm_bitmap, phys_mm_bitmap_max, len);
@@ -40,7 +40,7 @@ void *phys_mm_block_n_alloc(uint32_t len)
 
 void *phys_mm_block_alloc()
 {
-  if (phys_mm_bitmap_used - phys_mm_bitmap_max <= 0)
+  if (phys_mm_bitmap_max <= phys_mm_bitmap_used)
     return NULL;
 
   uint32_t bit = bitmap_get_first(phys_mm_bitmap, phys_mm_bitmap_max);
@@ -65,12 +65,12 @@ void phys_mm_block_free(void *block)
 
 void phys_mm_region_set(uint32_t base, uint32_t len)
 {
-  uint32_t blocks = len / PHYS_MM_BLOCK;
+  uint32_t blocks = DIV_CEIL(len, PHYS_MM_BLOCK);
   uint32_t align = base / PHYS_MM_BLOCK;
 
   for (uint32_t i = 0; i < blocks; i++)
   {
-    bitmap_unset(phys_mm_bitmap, align++);
+    bitmap_unset(phys_mm_bitmap, align + i);
     phys_mm_bitmap_used--;
   }
 
@@ -81,12 +81,12 @@ void phys_mm_region_set(uint32_t base, uint32_t len)
 
 void phys_mm_region_unset(uint32_t base, uint32_t len)
 {
-  uint32_t blocks = len / PHYS_MM_BLOCK;
+  uint32_t blocks = DIV_CEIL(len, PHYS_MM_BLOCK);
   uint32_t align = base / PHYS_MM_BLOCK;
 
   for (uint32_t i = 0; i < blocks; i++)
   {
-    bitmap_set(phys_mm_bitmap, align++);
+    bitmap_set(phys_mm_bitmap, align + i);
     phys_mm_bitmap_used++;
   }
 
