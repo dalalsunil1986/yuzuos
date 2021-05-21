@@ -106,8 +106,8 @@ uint32_t mmap_map(uint32_t addr, size_t len, int fd)
 
   if (process_file)
   {
-    //FIXME implment file mmap
-    log_warn("MMap: FIXME implement file mmap\n");
+    process_file->op->mmap(process_file, vm);
+    vm->file = process_file;
   }
   else
   {
@@ -142,10 +142,7 @@ uint32_t mmap_brk(uint32_t addr, size_t len)
     new_vm->end = new_brk;
 
   if (vm->file)
-  {
-    //FIXME implment file mmap
-    log_warn("MMap: FIXME implement file mmap\n");
-  }
+    vm->file->op->mmap(vm->file, new_vm);
   else
   {
     if (new_vm->end > vm->end)

@@ -95,9 +95,11 @@ struct vfs_file
   struct vfs_mount *mount;
 };
 
+struct process_vm;
 struct vfs_file_op
 {
   int (*open)(struct vfs_inode *inode, struct vfs_file *file);
+  int (*mmap)(struct vfs_file *file, struct process_vm *vm);
   ssize_t (*read)(struct vfs_file *file, char *buffer, size_t count, loff_t ppos);
 };
 
