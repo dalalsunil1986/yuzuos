@@ -1,5 +1,10 @@
 #pragma once
 
+#define KERNEL_VIRT_ADDR 0xC0000000
+#define PAGE_NUMBER (KERNEL_VIRT_ADDR >> 22)
+
+#ifndef ASM_FILE
+
 #include <kernel/memory/physical.h>
 #include <stdint.h>
 
@@ -20,6 +25,9 @@
 #define HEAP_TOP 0xF0000000
 #define HEAP_USER_TOP 0x40000000
 
+#define VIRT_TO_PHYS(addr) ((addr)-KERNEL_VIRT_ADDR)
+#define PHYS_TO_VIRT(addr) ((addr) + KERNEL_VIRT_ADDR)
+
 enum page_tbl_flags
 {
   PAGE_TBL_PRESENT = 1,
@@ -31,6 +39,7 @@ enum page_dir_flags
 {
   PAGE_DIR_PRESENT = 1,
   PAGE_DIR_WRITABLE = 2,
+  PAGE_DIR_USER = 4,
 };
 
 struct page_tbl
@@ -50,3 +59,5 @@ void virt_mm_addr_unmap(struct page_dir *dir, uint32_t virtual);
 void virt_mm_addr_range_unmap(struct page_dir *dir, uint32_t start, uint32_t end);
 struct page_dir *virt_mm_addr_create(struct page_dir *dir);
 void virt_mm_init();
+
+#endif

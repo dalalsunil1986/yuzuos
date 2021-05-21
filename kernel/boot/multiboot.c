@@ -1,6 +1,7 @@
 #include <kernel/boot/multiboot.h>
 #include <kernel/utils/log.h>
 #include <kernel/system/sys.h>
+#include <kernel/memory/virtual.h>
 #include <stddef.h>
 
 struct multiboot_info *multiboot_info;
@@ -13,7 +14,7 @@ void multiboot_init(uint32_t magic, uint32_t addr)
     sys_panic("Multiboot: Invalid magic number", NULL);
   }
 
-  multiboot_info = (struct multiboot_info *)addr;
+  multiboot_info = (struct multiboot_info *)PHYS_TO_VIRT(addr);
   log_info("Multiboot: Flags = 0x%x\n", (unsigned)multiboot_info->flags);
 
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 0))
@@ -25,7 +26,7 @@ void multiboot_init(uint32_t magic, uint32_t addr)
     log_info("Multiboot: Boot device = 0x%x\n", (unsigned)multiboot_info->boot_device);
 
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 2))
-    log_info("Multiboot: Cmdline = %s\n", (char *)multiboot_info->cmdline);
+    log_info("Multiboot: Cmdline = %s\n", (char *)PHYS_TO_VIRT(multiboot_info->cmdline));
 
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 3))
   {
@@ -60,7 +61,8 @@ void multiboot_init(uint32_t magic, uint32_t addr)
   if (MULTIBOOT_CHECK_FLAG(multiboot_info->flags, 6))
   {
     log_info("Multiboot: Mmap addr = 0x%x, length = 0x%x\n", (unsigned)multiboot_info->mmap_addr, (unsigned)multiboot_info->mmap_length);
-    for (struct multiboot_mmap_entry *mmap = (struct multiboot_mmap_entry *)multiboot_info->mmap_addr; (unsigned long)mmap < multiboot_info->mmap_addr + multiboot_info->mmap_length;
+    for (struct multiboot_mmap_entry *mmap = (struct multiboot_mmap_entry *)PHYS_TO_VIRT(multiboot_info->mmap_addr);
+         (unsigned long)mmap < PHYS_TO_VIRT(multiboot_info->mmap_addr) + multiboot_info->mmap_length;
          mmap = (struct multiboot_mmap_entry *)((unsigned long)mmap + mmap->size + sizeof(mmap->size)))
       log_info("Multiboot: * Mmap size = 0x%x, base_addr = 0x%x%08x, length = 0x%x%08x, type = 0x%x\n", (unsigned)mmap->size, (unsigned)(mmap->addr >> 32),
                (unsigned)(mmap->addr & 0xffffffff), (unsigned)(mmap->len >> 32), (unsigned)(mmap->len & 0xffffffff), (unsigned)mmap->type);

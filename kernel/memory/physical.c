@@ -1,4 +1,5 @@
 #include <kernel/memory/physical.h>
+#include <kernel/memory/virtual.h>
 #include <kernel/boot/multiboot.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/bitmap.h>
@@ -103,7 +104,8 @@ void phys_mm_init()
   uint32_t bitmap_size = DIV_CEIL(phys_mm_bitmap_max, PHYS_MM_BLOCK_P_BYTE);
   memset(phys_mm_bitmap, 0, bitmap_size);
 
-  for (struct multiboot_mmap_entry *mmap = (struct multiboot_mmap_entry *)multiboot_info->mmap_addr; (unsigned long)mmap < multiboot_info->mmap_addr + multiboot_info->mmap_length;
+  for (struct multiboot_mmap_entry *mmap = (struct multiboot_mmap_entry *)PHYS_TO_VIRT(multiboot_info->mmap_addr);
+       (unsigned long)mmap < PHYS_TO_VIRT(multiboot_info->mmap_addr) + multiboot_info->mmap_length;
        mmap = (struct multiboot_mmap_entry *)((unsigned long)mmap + mmap->size + sizeof(mmap->size)))
     if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
       phys_mm_region_set((uint32_t)mmap->addr, (uint32_t)mmap->len);

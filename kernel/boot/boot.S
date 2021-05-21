@@ -1,5 +1,6 @@
 #define ASM_FILE
 #include <kernel/boot/multiboot.h>
+#include <kernel/memory/virtual.h>
 
 .section .multiboot
 .align 4
@@ -31,12 +32,45 @@ multiboot_header:
 stack_bottom:
 	.skip 16384
 stack_top:
+
+.section .data
+.align 0x1000
+boot_page_dir:
+	.long 0x00000083
+		
+	.rept (PAGE_NUMBER - 1)
+		.long 0
+	.endr
+
+  .long 0x00000083
+
+	.rept (1024 - PAGE_NUMBER - 1)
+		.long 0
+	.endr
  
 .section .text
 .global _start
 .type _start, @function
 _start:
-	mov $stack_top, %esp
+	movl $(boot_page_dir - KERNEL_VIRT_ADDR), %ecx
+	movl %ecx, %cr3
+
+	movl %cr4, %ecx
+	orl $0x00000010, %ecx
+	movl %ecx, %cr4
+
+	movl %cr0, %ecx
+	orl $0x80000000, %ecx
+	movl %ecx, %cr0
+
+	lea higher_half, %ecx
+	jmp *%ecx
+
+higher_half:
+	movl $0, (boot_page_dir)
+	invlpg (0)
+
+	movl $stack_top, %esp
 
 	pushl %ebx
 	pushl %eax
