@@ -136,7 +136,7 @@ void *calloc(size_t nitems, size_t size)
 {
   size_t target_size = nitems * size;
   char *block = malloc(target_size);
-  if (block == NULL)
+  if (!block)
     return NULL;
   memset(block, 0, target_size);
   return block;
@@ -148,5 +148,6 @@ void free(void *ptr)
     return;
 
   struct malloc_block *block = (struct malloc_block *)ptr - 1;
+  malloc_assert(block);
   block->free = true;
 }
