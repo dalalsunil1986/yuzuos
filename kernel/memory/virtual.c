@@ -45,7 +45,7 @@ uint32_t virt_mm_phys_addr_get(uint32_t virtual)
 void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual, uint32_t flags)
 {
   if (virtual != PAGE_ALIGN(virtual))
-    log_warn("Virtual MM: Virtual addr = 0x%x, not page aligned\n", virtual);
+    log_warn("Virtual MM: Virtual addr = 0x%x, not page aligned (0x%x)\n", virtual, PAGE_ALIGN(virtual));
 
   if (!PAGE_IS_ENABLED(dir->entries[PAGE_DIR_INDEX(virtual)]))
   {
