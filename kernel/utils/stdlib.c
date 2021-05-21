@@ -144,6 +144,9 @@ void *calloc(size_t nitems, size_t size)
 
 void free(void *ptr)
 {
+  if (!ptr)
+    return;
+
   struct malloc_block *block = (struct malloc_block *)ptr - 1;
   block->free = true;
 }
