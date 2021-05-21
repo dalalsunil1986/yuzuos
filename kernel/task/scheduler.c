@@ -275,6 +275,8 @@ void sched_exit(int code)
 {
   sched_lock();
 
+  sched_process->exit_code = code;
+
   struct process_vm *iter;
   struct process_vm *next;
   dlist_foreach_entry_safe(iter, next, &sched_process->mm->list, list)

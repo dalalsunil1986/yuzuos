@@ -85,6 +85,7 @@ struct process_mm
 struct process
 {
   pid_t pid;
+  int exit_code;
 
   struct process_mm *mm;
   struct process_fs *fs;
