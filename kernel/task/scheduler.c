@@ -340,21 +340,39 @@ void sched_exit(int code)
 {
   sched_lock();
 
-  sched_process->exit_code = code;
+  struct process *process = sched_process;
+
+  if (process->pid == 1)
+    sys_panic("Scheduler: Tried to kill init process", &process->thread->registers);
+
+  process->exit_code = code;
+
+  for (int i = 0; i < FD_MAX; i++)
+  {
+    struct vfs_file *file = process->files->fd[i];
+
+    if (file && atomic_read(&file->count) == 1 && file->op->release)
+    {
+      file->op->release(file->dentry->inode, file);
+      free(file);
+      process->files->fd[i] = 0;
+    }
+  }
 
   struct process_vm *iter;
   struct process_vm *next;
-  dlist_foreach_entry_safe(iter, next, &sched_process->mm->list, list)
+  dlist_foreach_entry_safe(iter, next, &process->mm->list, list)
   {
     if (!iter->file)
-      virt_mm_addr_range_unmap(sched_process->page_dir, iter->start, iter->end);
+      virt_mm_addr_range_unmap(process->page_dir, iter->start, iter->end);
 
     dlist_remove(&iter->list);
     free(iter);
   }
 
   sched_thread_update(sched_thread, THREAD_TERMINATED);
-  virt_mm_addr_range_unmap(sched_process->page_dir, sched_thread->stack_user - SCHED_STACK_SIZE, sched_thread->stack_user);
+  virt_mm_addr_range_unmap(process->page_dir, sched_thread->stack_user - SCHED_STACK_SIZE, sched_thread->stack_user);
+  log_info("Scheduler: Process pid = %d, exited code = %d\n", process->pid, code);
 
   sched_unlock();
   sched_schedule();
