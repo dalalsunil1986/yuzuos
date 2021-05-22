@@ -7,7 +7,7 @@
 
 struct itr_registers
 {
-  uint32_t unused;
+  uint32_t gs;
   uint32_t fs;
   uint32_t es;
   uint32_t ds;
@@ -26,6 +26,6 @@ struct itr_registers
   uint32_t eflags;
   uint32_t useresp;
   uint32_t ss;
-};
+} __attribute__((packed));
 
 typedef int (*itr_handler_t)(struct itr_registers *registers);
