@@ -88,6 +88,53 @@ void virt_mm_addr_range_unmap(struct page_dir *dir, uint32_t start, uint32_t end
     virt_mm_addr_unmap(dir, addr);
 }
 
+struct page_dir *virt_mm_fork_dir(struct page_dir *dir)
+{
+  struct page_dir *fork_dir = virt_mm_addr_create();
+  char *aligned = malloc_align(PHYS_MM_BLOCK);
+  uint32_t heap_current = (uint32_t)malloc_sbrk(0);
+
+  for (int i_dir = 0; i_dir < 768; i_dir++)
+    if (PAGE_IS_ENABLED(dir->entries[i_dir]))
+    {
+      struct page_tbl *virtual_tbl = (struct page_tbl *)heap_current;
+      uint32_t physical_tbl = (uint32_t)phys_mm_block_alloc();
+
+      virt_mm_map_addr(dir, physical_tbl, (uint32_t)virtual_tbl, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER);
+      memset(virtual_tbl, 0, sizeof(struct page_tbl));
+
+      heap_current += sizeof(struct page_tbl);
+      struct page_tbl *tbl = (struct page_tbl *)(PAGE_TBL_BASE + i_dir * PHYS_MM_BLOCK);
+
+      for (int i_tbl = 0; i_tbl < PAGE_TBL_ENTRIES; i_tbl++)
+        if (PAGE_IS_ENABLED(tbl->entries[i_tbl]))
+        {
+          char *virtual_entry = (char *)heap_current;
+          char *forked_entry = virtual_entry + PHYS_MM_BLOCK;
+          heap_current = (uint32_t)(forked_entry + PHYS_MM_BLOCK);
+          uint32_t physical_entry = (uint32_t)phys_mm_block_alloc();
+
+          virt_mm_map_addr(dir, tbl->entries[i_tbl], (uint32_t)virtual_entry, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER);
+          virt_mm_map_addr(dir, physical_entry, (uint32_t)forked_entry, PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER);
+
+          memcpy(forked_entry, virtual_entry, PHYS_MM_BLOCK);
+
+          virt_mm_addr_unmap(dir, (uint32_t)virtual_entry);
+          virt_mm_addr_unmap(dir, (uint32_t)forked_entry);
+
+          virtual_tbl->entries[i_tbl] = physical_entry | PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE | PAGE_TBL_USER;
+        }
+
+      virt_mm_addr_unmap(dir, (uint32_t)virtual_tbl);
+      fork_dir->entries[i_dir] = physical_tbl | PAGE_DIR_PRESENT | PAGE_DIR_WRITABLE | PAGE_DIR_USER;
+    }
+
+  if (aligned)
+    free(aligned);
+
+  return fork_dir;
+}
+
 void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
 {
   uint32_t phys_tbl = (uint32_t)phys_mm_block_alloc();
