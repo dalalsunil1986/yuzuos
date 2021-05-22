@@ -57,7 +57,7 @@ void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual,
 uint32_t virt_mm_phys_addr_get(uint32_t virtual);
 void virt_mm_addr_unmap(struct page_dir *dir, uint32_t virtual);
 void virt_mm_addr_range_unmap(struct page_dir *dir, uint32_t start, uint32_t end);
-struct page_dir *virt_mm_addr_create(struct page_dir *dir);
+struct page_dir *virt_mm_addr_create();
 void virt_mm_init();
 
 #endif

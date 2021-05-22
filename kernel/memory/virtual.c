@@ -23,9 +23,10 @@ void virt_mm_flag_set(uint32_t *entry, uint32_t flags)
   *entry |= flags;
 }
 
-struct page_dir *virt_mm_addr_create(struct page_dir *dir)
+struct page_dir *virt_mm_addr_create()
 {
   char *align = malloc_align(PHYS_MM_BLOCK);
+  struct page_dir *dir = calloc(1, sizeof(struct page_dir));
   if (align)
     free(align);
 
