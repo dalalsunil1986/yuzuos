@@ -2,5 +2,5 @@
 
 #include <ukernel/limits.h>
 
-#define FD_MAX 1024
+#define FD_MAX 512
 #define NAME_MAX 256
