@@ -181,6 +181,7 @@ struct process_mm *sched_process_clone_mm(struct process *parent)
     parent_mm->start = iter->start;
     parent_mm->end = iter->end;
     parent_mm->file = iter->file;
+    parent_mm->flags = iter->flags;
     parent_mm->mm = mm;
     dlist_add_tail(&parent_mm->list, &mm->list);
   }

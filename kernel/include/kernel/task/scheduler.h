@@ -66,6 +66,7 @@ struct process_vm
 {
   uint32_t start;
   uint32_t end;
+  uint32_t flags;
 
   struct vfs_file *file;
   struct process_mm *mm;
@@ -102,3 +103,4 @@ void sched_load(const char *path);
 struct process *sched_process_get();
 struct thread *sched_thread_get();
 pid_t sched_process_fork(struct process *parent);
+int sched_process_execve(const char *path, char *const argv[], char *const envp[]);
