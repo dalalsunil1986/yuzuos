@@ -94,7 +94,7 @@ int ini_parse(char *buffer, ini_handler_t handler)
       if (*end == ']')
       {
         *end = '\0';
-        strncpy(section, start + 1, sizeof(section));
+        strncpy(section, start + 1, sizeof(section) - 1);
         *prev_name = '\0';
       }
       else if (!result)
@@ -114,7 +114,7 @@ int ini_parse(char *buffer, ini_handler_t handler)
 
         value = ini_skip(value);
         ini_strip(value);
-        strncpy(prev_name, name, sizeof(prev_name));
+        strncpy(prev_name, name, sizeof(prev_name) - 1);
         if (!handler(section, name, value) && !result)
           result = i_line;
       }
