@@ -85,6 +85,7 @@ struct process_mm
 
 struct process
 {
+  const char *name;
   pid_t pid;
   int exit_code;
 

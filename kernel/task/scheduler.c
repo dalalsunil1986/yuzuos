@@ -211,6 +211,8 @@ struct process *sched_process_create(struct process *parent)
 void sched_load(const char *path)
 {
   struct process *process = sched_process_create(sched_process);
+  process->name = strdup(path);
+
   struct thread *thread = sched_thread_create(process);
 
   struct trap_frame *frame = (struct trap_frame *)thread->esp;
@@ -229,6 +231,7 @@ pid_t sched_process_fork(struct process *parent)
   struct process *process = calloc(1, sizeof(struct process));
   process->pid = sched_pid++;
   process->parent = parent;
+  process->name = strdup(parent->name);
   process->mm = sched_process_clone_mm(parent);
   process->fs = sched_process_clone_fs(parent);
   process->files = sched_process_clone_files(parent);
@@ -418,6 +421,9 @@ int sched_process_execve(const char *path, char *const argv[], char *const envp[
     new_envp[i] = calloc(len + 1, sizeof(char));
     memcpy(new_envp[i], envp[i], len);
   }
+
+  free(sched_process->name);
+  sched_process->name = strdup(path);
 
   char *p_path = strdup(path);
   elf32_unload();
