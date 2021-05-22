@@ -21,7 +21,7 @@ void log_write(const char *buffer, int len)
     log_write_char(buffer[i]);
 }
 
-void log_format(enum log_type type, const char *file, int line, const char *format, va_list ap)
+void log_format(enum log_type type, const char *format, va_list ap)
 {
   int len;
 
@@ -30,16 +30,16 @@ void log_format(enum log_type type, const char *file, int line, const char *form
 
   char buffer[LOG_BUF];
   const char *name = sched_process_get() && sched_process_get()->name ? sched_process_get()->name : "Kernel";
-  len = snprintf(buffer, LOG_BUF, "\x1B[1m\x1B[34m[%s] %s%-5s\x1b[90m %s:%d\x1B[37m %s\x1b[0m", name, log_type_color[type], log_type_msg[type], file, line, buffer_format);
+  len = snprintf(buffer, LOG_BUF, "\x1B[1m\x1B[34m[%s] %s%-5s\x1b[90m\x1B[37m%s\x1b[0m", name, log_type_color[type], log_type_msg[type], buffer_format);
 
   log_write(buffer, len);
 }
 
-void log_log(enum log_type type, const char *file, int line, const char *format, ...)
+void log_log(enum log_type type, const char *format, ...)
 {
   va_list ap;
   va_start(ap, format);
-  log_format(type, file, line, format, ap);
+  log_format(type, format, ap);
   va_end(ap);
 }
 

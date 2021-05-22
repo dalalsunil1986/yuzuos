@@ -2,9 +2,9 @@
 
 #define LOG_BUF 4096
 
-#define log_info(...) log_log(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
-#define log_warn(...) log_log(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
-#define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
+#define log_info(...) log_log(LOG_INFO, __VA_ARGS__)
+#define log_warn(...) log_log(LOG_WARN, __VA_ARGS__)
+#define log_error(...) log_log(LOG_ERROR, __VA_ARGS__)
 
 enum log_type
 {
@@ -13,4 +13,4 @@ enum log_type
   LOG_ERROR
 };
 
-void log_log(enum log_type type, const char *file, int line, const char *format, ...);
+void log_log(enum log_type type, const char *format, ...);
