@@ -4,6 +4,7 @@
 #include <kernel/utils/types.h>
 #include <kernel/utils/fcntl.h>
 #include <kernel/utils/stat.h>
+#include <kernel/utils/atomic.h>
 #include <stdint.h>
 
 #define VFS_BYTES_P_SECTOR 512
@@ -77,6 +78,7 @@ struct vfs_inode
   time_t atime;
   time_t ctime;
   time_t mtime;
+  atomic_t count;
 
   struct vfs_inode_op *op;
   struct vfs_file_op *fop;
@@ -89,6 +91,7 @@ struct vfs_file
   size_t max_count;
   fmode_t mode;
   loff_t pos;
+  atomic_t count;
 
   struct vfs_file_op *op;
   struct vfs_dentry *dentry;

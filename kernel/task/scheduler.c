@@ -151,7 +151,12 @@ struct process_files *sched_process_clone_files(struct process *parent)
 {
   struct process_files *files = calloc(1, sizeof(struct process_files));
   if (parent)
+  {
     memcpy(files, parent->files, sizeof(struct process_files));
+    for (int i = 0; i < FD_MAX; i++)
+      if (parent->files->fd[i])
+        atomic_inc(&parent->files->fd[i]->count);
+  }
   return files;
 }
 

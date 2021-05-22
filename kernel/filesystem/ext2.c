@@ -71,6 +71,7 @@ struct vfs_inode *ext2_fs_inode_alloc(struct vfs_sb *sb)
 {
   struct vfs_inode *inode = virt_fs_inode_alloc();
   inode->sb = sb;
+  atomic_set(&inode->count, 0);
   return inode;
 }
 

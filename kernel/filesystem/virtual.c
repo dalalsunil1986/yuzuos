@@ -51,6 +51,7 @@ struct vfs_file *virt_fs_file_alloc()
 {
   struct vfs_file *file = calloc(1, sizeof(struct vfs_file));
   file->max_count = INT_MAX;
+  atomic_set(&file->count, 1);
   return file;
 }
 
@@ -244,6 +245,7 @@ int virt_fs_open(const char *path, int flags, ...)
     }
   }
 
+  atomic_inc(&file->dentry->inode->count);
   sched_process_get()->files->fd[fd] = file;
   return fd;
 }
