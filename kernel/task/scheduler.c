@@ -17,6 +17,7 @@ static struct process *sched_process;
 
 extern void sched_switch(uint32_t *esp, uint32_t esp_new, uint32_t physical);
 extern void sched_jump_usermode(uint32_t eip, uint32_t esp, uint32_t addr);
+extern void sched_return_usermode(struct itr_registers *registers);
 void sched_thread_queue(struct thread *thread);
 void sched_thread_unqueue(struct thread *thread);
 
@@ -106,13 +107,23 @@ void sched_thread_entry(const char *path, struct thread *thread)
   sched_jump_usermode(elf->stack, elf->entry, SCHED_PAGE_FAULT);
 }
 
-struct thread *sched_thread_create(const char *path, struct process *process)
+void sched_thread_user_entry(struct thread *thread)
+{
+  sched_unlock();
+
+  tss_set_stack(0x10, thread->stack_kernel);
+  log_info("Scheduler: Return usermode, pid = %d\n", sched_process->pid);
+  sched_return_usermode(&thread->registers);
+}
+
+struct thread *sched_thread_create(struct process *process)
 {
   sched_lock();
 
   struct thread *thread = calloc(1, sizeof(struct thread));
   process->thread = thread;
   thread->tid = sched_tid++;
+  thread->time = 0;
   thread->process = process;
   thread->state = THREAD_READY;
   thread->stack_kernel = (uint32_t)(calloc(SCHED_STACK_SIZE, sizeof(char)) + SCHED_STACK_SIZE);
@@ -120,10 +131,7 @@ struct thread *sched_thread_create(const char *path, struct process *process)
 
   struct trap_frame *frame = (struct trap_frame *)thread->esp;
   memset(frame, 0, sizeof(struct trap_frame));
-  frame->param2 = (uint32_t)thread;
-  frame->param1 = (uint32_t)strdup(path);
   frame->return_addr = SCHED_PAGE_FAULT;
-  frame->eip = (uint32_t)sched_thread_entry;
   frame->eax = 0;
   frame->ecx = 0;
   frame->edx = 0;
@@ -155,6 +163,25 @@ struct process_fs *sched_process_clone_fs(struct process *parent)
   return fs;
 }
 
+struct process_mm *sched_process_clone_mm(struct process *parent)
+{
+  struct process_mm *mm = calloc(1, sizeof(struct process_mm));
+  memcpy(mm, parent->mm, sizeof(struct process_mm));
+  dlist_head_init(&mm->list);
+
+  struct process_vm *iter = NULL;
+  dlist_foreach_entry(iter, &parent->mm->list, list)
+  {
+    struct process_vm *parent_mm = calloc(1, sizeof(struct process_vm));
+    parent_mm->start = iter->start;
+    parent_mm->end = iter->end;
+    parent_mm->file = iter->file;
+    parent_mm->mm = mm;
+    dlist_add_tail(&parent_mm->list, &mm->list);
+  }
+  return mm;
+}
+
 struct process *sched_process_create(struct process *parent)
 {
   sched_lock();
@@ -177,9 +204,42 @@ struct process *sched_process_create(struct process *parent)
 void sched_load(const char *path)
 {
   struct process *process = sched_process_create(sched_process);
-  struct thread *thread = sched_thread_create(path, process);
+  struct thread *thread = sched_thread_create(process);
+
+  struct trap_frame *frame = (struct trap_frame *)thread->esp;
+  frame->param2 = (uint32_t)thread;
+  frame->param1 = (uint32_t)strdup(path);
+  frame->eip = (uint32_t)sched_thread_entry;
+
   sched_thread_queue(thread);
   log_info("Scheduler: Loaded program from path = %s\n", path);
+}
+
+pid_t sched_process_fork(struct process *parent)
+{
+  sched_lock();
+
+  struct process *process = calloc(1, sizeof(struct process));
+  process->pid = sched_pid++;
+  process->parent = parent;
+  process->mm = sched_process_clone_mm(parent);
+  process->fs = sched_process_clone_fs(parent);
+  process->files = sched_process_clone_files(parent);
+  process->page_dir = virt_mm_fork_dir(parent->page_dir);
+
+  struct thread *thread = sched_thread_create(process);
+  thread->stack_user = parent->thread->stack_user;
+
+  memcpy(&thread->registers, &parent->thread->registers, sizeof(struct itr_registers));
+  thread->registers.eax = 0;
+
+  struct trap_frame *frame = (struct trap_frame *)thread->esp;
+  frame->param1 = (uint32_t)thread;
+  frame->eip = (uint32_t)sched_thread_user_entry;
+
+  sched_unlock();
+  sched_thread_queue(process->thread);
+  return process->pid;
 }
 
 void sched_thread_switch(struct thread *thread)
@@ -304,7 +364,7 @@ void sched_init()
   plist_head_init(&sched_list);
 
   sched_process = sched_process_create(NULL);
-  sched_thread = sched_thread_create(NULL, sched_process);
+  sched_thread = sched_thread_create(sched_process);
 
   irq_handler_set(0, sched_handler);
 

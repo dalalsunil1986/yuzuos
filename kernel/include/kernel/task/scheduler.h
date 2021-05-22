@@ -101,3 +101,4 @@ void sched_exit(int code);
 void sched_load(const char *path);
 struct process *sched_process_get();
 struct thread *sched_thread_get();
+pid_t sched_process_fork(struct process *parent);

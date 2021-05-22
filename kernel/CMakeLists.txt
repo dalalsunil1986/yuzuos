@@ -11,7 +11,8 @@ set(ASM_SOURCES
   
   task/sched_switch.S
   task/tss_flush.S
-  task/sched_jump_usermode.S)
+  task/sched_jump_usermode.S
+  task/sched_return_usermode.S)
 
 set(C_SOURCES
   init.c
