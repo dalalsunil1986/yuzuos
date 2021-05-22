@@ -108,3 +108,4 @@ struct elf32_phdr
 };
 
 struct elf32_layout *elf32_load(const char *path);
+void elf32_unload();

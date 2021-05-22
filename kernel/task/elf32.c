@@ -3,6 +3,7 @@
 #include <kernel/task/scheduler.h>
 #include <kernel/memory/virtual.h>
 #include <kernel/memory/mmap.h>
+#include <kernel/memory/mman.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
 #include <kernel/utils/stdlib.h>
@@ -83,4 +84,20 @@ struct elf32_layout *elf32_load(const char *path)
   layout->stack = stack + SCHED_STACK_SIZE;
 
   return layout;
+}
+
+void elf32_unload()
+{
+  struct process_vm *iter;
+  struct process_vm *next;
+  dlist_foreach_entry_safe(iter, next, &sched_process_get()->mm->list, list)
+  {
+    if (!iter->file && (iter->flags & MAP_SHARED) == 0)
+    {
+      virt_mm_addr_range_unmap(sched_process_get()->page_dir, iter->start, iter->end);
+      dlist_remove(&iter->list);
+    }
+  }
+  memset(sched_process_get()->mm, 0, sizeof(struct process_mm));
+  dlist_head_init(&sched_process_get()->mm->list);
 }
