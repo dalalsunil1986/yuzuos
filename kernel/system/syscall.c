@@ -51,11 +51,17 @@ pid_t syscall_fork()
   return sched_process_fork(sched_process_get());
 }
 
+int syscall_execve(const char *pathname, char *const argv[], char *const envp[])
+{
+  return sched_process_execve(pathname, argv, envp);
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
     [__NR_fork] = syscall_fork,
     [__NR_read] = syscall_read,
     [__NR_open] = syscall_open,
+    [__NR_execve] = syscall_execve,
     [__NR_brk] = syscall_brk,
     [__NR_fstat] = syscall_fstat,
     [__NR_log] = syscall_log};
@@ -73,7 +79,7 @@ int syscall_handler(struct itr_registers *registers)
   memcpy(&sched_thread_get()->registers, registers, sizeof(struct itr_registers));
   uint32_t result = handler(registers->ebx, registers->ecx, registers->edx, registers->esi, registers->edi);
   registers->eax = result;
-  log_info("Syscall: Called syscall id = %d, result = 0x%x\n", index, result);
+  log_info("Syscall: Called syscall id = %d, result = 0x%x, pid = %d\n", index, result, sched_process_get()->pid);
 
   return ITR_CONTINUE;
 }
