@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(YuzuOS C ASM)
 
+if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "")
+  message(FATAL_ERROR "Don't use CMAKE_BUILD_TYPE when building")
+endif()
+
 set(CMAKE_SYSROOT ${CMAKE_BINARY_DIR}/sysroot)
 set(CMAKE_STAGING_PREFIX ${CMAKE_SYSROOT}/)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SYSROOT}/)
