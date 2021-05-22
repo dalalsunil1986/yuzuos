@@ -2,6 +2,7 @@
 #include <kernel/task/tss.h>
 #include <kernel/task/elf32.h>
 #include <kernel/system/sys.h>
+#include <kernel/system/syscall.h>
 #include <kernel/interrupts/irq.h>
 #include <kernel/interrupts/isr.h>
 #include <kernel/utils/log.h>
@@ -377,6 +378,82 @@ void sched_exit(int code)
 
   sched_unlock();
   sched_schedule();
+}
+
+int pointers_array_count(void *arr)
+{
+  if (!arr)
+    return 0;
+
+  const int *p_arr = arr;
+  while (*p_arr)
+    p_arr++;
+
+  return p_arr - (int *)arr;
+}
+
+int32_t sched_process_sbrk(uint32_t increment)
+{
+  uint32_t brk = sched_process->mm->brk;
+  syscall_brk((void *)sched_process->mm->brk + increment);
+  return brk;
+}
+
+int sched_process_execve(const char *path, char *const argv[], char *const envp[])
+{
+  int argv_len = pointers_array_count((void *)argv);
+  char **new_argv = calloc(argv_len, sizeof(char *));
+  for (int i = 0; i < argv_len; ++i)
+  {
+    int len = strlen(argv[i]);
+    new_argv[i] = calloc(len + 1, sizeof(char));
+    memcpy(new_argv[i], argv[i], len);
+  }
+
+  int envp_len = pointers_array_count((void *)envp);
+  char **new_envp = calloc(envp_len, sizeof(char *));
+  for (int i = 0; i < envp_len; ++i)
+  {
+    int len = strlen(envp[i]);
+    new_envp[i] = calloc(len + 1, sizeof(char));
+    memcpy(new_envp[i], envp[i], len);
+  }
+
+  char *p_path = strdup(path);
+  elf32_unload();
+  struct elf32_layout *elf = elf32_load(p_path);
+  free(p_path);
+
+  char **user_argv = (char **)sched_process_sbrk(argv_len + 1);
+  memset(user_argv, 0, argv_len + 1);
+  for (int i = 0; i < argv_len; ++i)
+  {
+    int len = strlen(new_argv[i]);
+    user_argv[i] = (char *)sched_process_sbrk(len + 1);
+    memcpy(user_argv[i], new_argv[i], len);
+  }
+
+  char **user_envp = (char **)sched_process_sbrk(envp_len + 1);
+  memset(user_envp, 0, envp_len + 1);
+  for (int i = 0; i < envp_len; ++i)
+  {
+    int len = strlen(new_envp[i]);
+    user_envp[i] = (char *)sched_process_sbrk(len + 1);
+    memcpy(user_envp[i], new_envp[i], len);
+  }
+
+  sched_thread->stack_user = elf->stack;
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = (uint32_t)user_envp;
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = (uint32_t)user_argv;
+  elf->stack -= 4;
+  *(uint32_t *)elf->stack = argv_len;
+
+  tss_set_stack(0x10, sched_thread->stack_kernel);
+  log_info("Scheduler: Execve enter usermode, pid = %d, tid = %d, entry = 0x%x, stack = 0x%x\n", sched_process->pid, sched_thread->tid, elf->entry, elf->stack);
+  sched_jump_usermode(elf->stack, elf->entry, SCHED_PAGE_FAULT);
+  return 0;
 }
 
 void sched_init()
