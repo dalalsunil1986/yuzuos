@@ -46,8 +46,14 @@ ssize_t syscall_read(int fd, void *buf, size_t count)
   return virt_fs_fread(fd, buf, count);
 }
 
+pid_t syscall_fork()
+{
+  return sched_process_fork(sched_process_get());
+}
+
 static void *syscalls[] = {
     [__NR_exit] = syscall_exit,
+    [__NR_fork] = syscall_fork,
     [__NR_read] = syscall_read,
     [__NR_open] = syscall_open,
     [__NR_brk] = syscall_brk,
