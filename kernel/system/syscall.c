@@ -17,9 +17,9 @@ int syscall_open(const char *path, int flags, mode_t mode)
   return virt_fs_open(path, flags, mode);
 }
 
-void syscall_log(const char *buffer, int len)
+void syscall_log(enum log_type type, const char *file, int line, const char *format)
 {
-  log_write(buffer, len);
+  log_log(type, file, line, format);
 }
 
 int syscall_fstat(int fildes, struct stat *stat)

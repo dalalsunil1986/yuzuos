@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdarg.h>
+
 #define LOG_PORT 0x3F8
 #define LOG_BUF 4096
 
@@ -16,4 +18,4 @@ enum log_type
 
 void log_init();
 void log_log(enum log_type type, const char *file, int line, const char *format, ...);
-void log_write(const char *buffer, int len);
+void log_format(enum log_type type, const char *file, int line, const char *format, va_list ap);

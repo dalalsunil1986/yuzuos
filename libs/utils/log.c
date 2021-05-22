@@ -5,15 +5,12 @@
 
 static char buffer[LOG_BUF];
 
-_syscall2(log, const char *, int);
+_syscall4(log, enum log_type, const char *, int, const char *);
 void log_log(enum log_type type, const char *file, int line, const char *format, ...)
 {
-  (void)type;
-  (void)file;
-  (void)line;
   va_list ap;
   va_start(ap, format);
-  int len = vsprintf(buffer, format, ap);
+  vsprintf(buffer, format, ap);
   va_end(ap);
-  syscall_log(buffer, len);
+  syscall_log(type, file, line, buffer);
 }

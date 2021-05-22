@@ -1,6 +1,7 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdio.h>
 #include <kernel/system/io.h>
+#include <kernel/task/scheduler.h>
 
 static const char *log_type_msg[] = {
     "INFO", "WARN", "ERROR"};
@@ -20,20 +21,26 @@ void log_write(const char *buffer, int len)
     log_write_char(buffer[i]);
 }
 
-void log_log(enum log_type type, const char *file, int line, const char *format, ...)
+void log_format(enum log_type type, const char *file, int line, const char *format, va_list ap)
 {
   int len;
 
-  va_list ap;
-  va_start(ap, format);
   char buffer_format[LOG_BUF];
   len = vsnprintf(buffer_format, LOG_BUF, format, ap);
-  va_end(ap);
 
   char buffer[LOG_BUF];
-  len = snprintf(buffer, LOG_BUF, "\x1B[1m\x1B[34m[Kernel] %s%-5s\x1b[90m %s:%d\x1B[37m %s\x1b[0m", log_type_color[type], log_type_msg[type], file, line, buffer_format);
+  const char *name = sched_process_get() && sched_process_get()->name ? sched_process_get()->name : "Kernel";
+  len = snprintf(buffer, LOG_BUF, "\x1B[1m\x1B[34m[%s] %s%-5s\x1b[90m %s:%d\x1B[37m %s\x1b[0m", name, log_type_color[type], log_type_msg[type], file, line, buffer_format);
 
   log_write(buffer, len);
+}
+
+void log_log(enum log_type type, const char *file, int line, const char *format, ...)
+{
+  va_list ap;
+  va_start(ap, format);
+  log_format(type, file, line, format, ap);
+  va_end(ap);
 }
 
 void log_init()
