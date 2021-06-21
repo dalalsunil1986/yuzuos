@@ -1,13 +1,34 @@
-#include <kernel/memory/gdt.h>
+/**
+ * @file kernel/arch/x86/boot/gdt.c
+ * @brief Global Descriptor Table implementation
+ */
+
+#include <kernel/boot/gdt.h>
 #include <kernel/boot/serial.h>
 #include <kernel/task/tss.h>
 
+/* This stores all GDT entries */
 static struct gdt_entry gdt_entries[GDT_ENTRIES];
+/* This stores the GDT segment */
 static struct gdt_pointer gdt;
 
+/**
+ * @brief Reload segment registers
+ * @param addr The GDT segment address
+ */
 extern void gdt_flush(uint32_t addr);
+
+/* Reload tss */
 extern void tss_flush();
 
+/**
+ * @brief Add an entry on the GDT
+ * @param index The GDT vector index
+ * @param base Address where the segment begins
+ * @param limit The maximum addressable unit 
+ * @param access The entry access flags
+ * @param granularity Page granularity
+ */
 void gdt_entry_add(uint8_t index, uint32_t base, uint32_t limit, uint8_t access, uint8_t granularity)
 {
   gdt_entries[index].base_low = base & 0xFFFF;

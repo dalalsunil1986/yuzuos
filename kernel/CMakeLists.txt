@@ -1,5 +1,4 @@
 set(ASM_SOURCES
-  memory/gdt_flush.S
   memory/page_enable.S
   memory/tbl_flush_entry.S
   
@@ -19,7 +18,6 @@ set(C_SOURCES
   utils/dlist.c
   utils/plist.c
   
-  memory/gdt.c
   memory/physical.c
   memory/virtual.c
   memory/mmap.c

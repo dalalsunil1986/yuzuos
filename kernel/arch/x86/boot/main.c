@@ -6,11 +6,11 @@
 #include <kernel/init.h>
 #include <kernel/boot/serial.h>
 #include <kernel/boot/idt.h>
-
 #include <kernel/boot/multiboot.h>
+#include <kernel/boot/gdt.h>
+
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
-#include <kernel/memory/gdt.h>
 #include <kernel/memory/physical.h>
 #include <kernel/memory/virtual.h>
 #include <kernel/drivers/keyboard.h>

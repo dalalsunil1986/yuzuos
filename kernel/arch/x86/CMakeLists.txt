@@ -3,6 +3,7 @@ set(C_SOURCES
   boot/multiboot.c
   boot/serial.c
   boot/idt.c
+  boot/gdt.c
   
   kernel/isr.c
   kernel/irq.c
@@ -11,6 +12,7 @@ set(C_SOURCES
 set(ASM_SOURCES
   boot/boot.S
   boot/idt_flush.S
+  boot/gdt_flush.S
   
   kernel/isr_common.S
   kernel/irq_common.S)
