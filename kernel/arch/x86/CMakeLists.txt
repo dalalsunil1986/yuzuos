@@ -1,6 +1,7 @@
 set(C_SOURCES
   boot/main.c
-  boot/multiboot.c)
+  boot/multiboot.c
+  boot/serial.c)
 
 set(ASM_SOURCES
   boot/boot.S)

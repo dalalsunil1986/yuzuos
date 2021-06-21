@@ -4,6 +4,8 @@
  * @author Saullo Bretas Silva
  */
 #include <kernel/init.h>
+#include <kernel/boot/serial.h>
+
 #include <kernel/boot/multiboot.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
@@ -30,6 +32,7 @@ void arch_main(uint32_t magic, uint32_t addr)
 {
   sys_cli();
 
+  serial_early_init();
   log_init();
   gdt_init();
   idt_init();
