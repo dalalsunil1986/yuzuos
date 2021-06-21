@@ -1,5 +1,5 @@
 #include <kernel/drivers/mouse.h>
-#include <kernel/interrupts/irq.h>
+#include <kernel/asm/irq.h>
 #include <kernel/asm/io.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>

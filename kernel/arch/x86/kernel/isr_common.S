@@ -53,6 +53,7 @@ ISR_NO_ERR 31
 ISR_NO_ERR 127
 
 isr_common:
+  # Puhs registers
   pusha
 
   push %ds
@@ -60,23 +61,26 @@ isr_common:
   push %fs
   push %gs
 
+  # Load kernel data segment
   mov $0x10, %ax
   mov %ax, %ds
   mov %ax, %es
   mov %ax, %fs
   mov %ax, %gs
 
-  cld
-
-  push %esp
+  # Call ISR handler
+  pushl %esp
   call isr_handler
-  add $4, %esp
+  addl $4, %esp
 
   pop %gs
   pop %fs
   pop %es
   pop %ds
 
+  # Pops registers
   popa
+  # Cleans up the pushed error code and pushed ISR number
   add $8, %esp
+  sti
   iret

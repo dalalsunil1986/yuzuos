@@ -5,13 +5,11 @@
  */
 #include <kernel/init.h>
 #include <kernel/boot/serial.h>
+#include <kernel/boot/idt.h>
 
 #include <kernel/boot/multiboot.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
-#include <kernel/interrupts/idt.h>
-#include <kernel/interrupts/irq.h>
-#include <kernel/interrupts/isr.h>
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/physical.h>
 #include <kernel/memory/virtual.h>
@@ -36,8 +34,6 @@ void arch_main(uint32_t magic, uint32_t addr)
   log_init();
   gdt_init();
   idt_init();
-  isr_init();
-  irq_init();
   multiboot_init(magic, addr);
   phys_mm_init();
   virt_mm_init();

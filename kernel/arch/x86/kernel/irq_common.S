@@ -28,6 +28,7 @@ IRQ 14, 46
 IRQ 15, 47
 
 irq_common:
+  # Puhs registers
   pusha
 
   push %ds
@@ -35,15 +36,15 @@ irq_common:
   push %fs
   push %gs
 
+  # Load kernel data segment
   mov $0x10, %ax
   mov %ax, %ds
   mov %ax, %es
   mov %ax, %fs
   mov %ax, %gs
 
-  cld
-
-  push %esp
+  # Call IRQ handler
+  pushl %esp
   call irq_handler
   add $4, %esp
 
@@ -52,6 +53,9 @@ irq_common:
   pop %es
   pop %ds
 
+  # Pops registers
   popa
+  # Cleans up the pushed error code and pushed IRQ number
   add $8, %esp
+  sti
   iret

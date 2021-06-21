@@ -1,5 +1,5 @@
 #include <kernel/drivers/keyboard.h>
-#include <kernel/interrupts/irq.h>
+#include <kernel/asm/irq.h>
 #include <kernel/asm/io.h>
 #include <kernel/utils/log.h>
 

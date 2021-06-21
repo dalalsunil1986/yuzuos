@@ -1,6 +1,6 @@
 #include <kernel/system/syscall.h>
 #include <kernel/task/scheduler.h>
-#include <kernel/interrupts/isr.h>
+#include <kernel/asm/isr.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/string.h>
 #include <kernel/utils/errno.h>

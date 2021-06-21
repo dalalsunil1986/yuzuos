@@ -1,5 +1,5 @@
 #include <kernel/drivers/rtc.h>
-#include <kernel/interrupts/irq.h>
+#include <kernel/asm/irq.h>
 #include <kernel/utils/log.h>
 #include <kernel/asm/io.h>
 

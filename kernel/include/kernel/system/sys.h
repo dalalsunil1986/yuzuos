@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/interrupts/handler.h>
+#include <kernel/asm/itr_handler.h>
 #include <stdbool.h>
 
 #define sys_panic(message, registers) _sys_panic(message, __FILE__, __LINE__, registers)

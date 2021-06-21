@@ -3,10 +3,6 @@ set(ASM_SOURCES
   memory/page_enable.S
   memory/tbl_flush_entry.S
   
-  interrupts/idt_flush.S
-  interrupts/irq.S
-  interrupts/isr.S
-  
   task/sched_switch.S
   task/tss_flush.S
   task/sched_jump_usermode.S
@@ -27,11 +23,6 @@ set(C_SOURCES
   memory/physical.c
   memory/virtual.c
   memory/mmap.c
-  
-  interrupts/idt.c
-  interrupts/pic.c
-  interrupts/irq.c
-  interrupts/isr.c
   
   system/sys.c
   system/syscall.c

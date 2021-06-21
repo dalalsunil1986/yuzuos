@@ -3,8 +3,8 @@
 #include <kernel/task/elf32.h>
 #include <kernel/system/sys.h>
 #include <kernel/system/syscall.h>
-#include <kernel/interrupts/irq.h>
-#include <kernel/interrupts/isr.h>
+#include <kernel/asm/irq.h>
+#include <kernel/asm/isr.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
 #include <kernel/utils/string.h>

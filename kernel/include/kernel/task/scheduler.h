@@ -4,7 +4,7 @@
 #include <kernel/memory/virtual.h>
 #include <kernel/utils/plist.h>
 #include <kernel/utils/types.h>
-#include <kernel/interrupts/handler.h>
+#include <kernel/asm/itr_handler.h>
 #include <kernel/system/limits.h>
 #include <stdint.h>
 
