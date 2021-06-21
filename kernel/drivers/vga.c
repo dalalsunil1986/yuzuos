@@ -86,21 +86,23 @@ void vga_write(const char *buffer, size_t len)
     vga_write_char(buffer[i]);
 }
 
-void vga_init()
+void vga_clear()
 {
-  vga_row = 0;
-  vga_column = 0;
-  vga_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-  vga_buffer = (uint16_t *)PHYS_TO_VIRT(0xB8000);
-
   for (size_t y = 0; y < VGA_HEIGHT; y++)
     for (size_t x = 0; x < VGA_WIDTH; x++)
     {
       const size_t index = y * VGA_WIDTH + x;
       vga_buffer[index] = vga_entry(' ', vga_color);
     }
-
   vga_cursor_update(vga_column, vga_row);
+}
+
+void vga_init()
+{
+  vga_row = 0;
+  vga_column = 0;
+  vga_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+  vga_buffer = (uint16_t *)PHYS_TO_VIRT(0xB8000);
 
   log_info("VGA: Initialized\n");
 }
