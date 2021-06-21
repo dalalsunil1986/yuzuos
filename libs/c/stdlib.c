@@ -3,7 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <unistd.h>
-#include <utils/log.h>
+#include <core/log.h>
 
 #define ENV_HOLE (char *)0xcc00
 

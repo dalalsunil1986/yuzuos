@@ -1,5 +1,5 @@
-#include <utils/ini.h>
-#include <utils/log.h>
+#include <core/ini.h>
+#include <core/log.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>

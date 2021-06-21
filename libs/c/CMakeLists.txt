@@ -19,7 +19,7 @@ add_library(libc ${SOURCES})
 install(TARGETS libc ARCHIVE DESTINATION usr/lib)
 set_target_properties(libc PROPERTIES OUTPUT_NAME c)
 target_link_directories(libc PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(libc libutils)
+target_link_libraries(libc libcore)
 
 add_library(crt0 STATIC main.c)
 add_custom_command(

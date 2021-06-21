@@ -1,5 +1,5 @@
-#include <utils/log.h>
-#include <utils/ini.h>
+#include <core/log.h>
+#include <core/ini.h>
 #include <stdbool.h>
 #include <unistd.h>
 
