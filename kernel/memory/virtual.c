@@ -1,5 +1,5 @@
 #include <kernel/memory/virtual.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 #include <kernel/utils/string.h>
 #include <kernel/utils/stdlib.h>
 
@@ -46,7 +46,7 @@ uint32_t virt_mm_phys_addr_get(uint32_t virtual)
 void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual, uint32_t flags)
 {
   if (virtual != PAGE_ALIGN(virtual))
-    log_warn("Virtual MM: Virtual addr = 0x%x, not page aligned (0x%x)\n", virtual, PAGE_ALIGN(virtual));
+    serial_early_kprintf("Virtual MM: Virtual addr = 0x%x, not page aligned (0x%x)\n", virtual, PAGE_ALIGN(virtual));
 
   if (!PAGE_IS_ENABLED(dir->entries[PAGE_DIR_INDEX(virtual)]))
   {
@@ -68,7 +68,7 @@ void virt_mm_map_addr(struct page_dir *dir, uint32_t physical, uint32_t virtual,
 void virt_mm_addr_unmap(struct page_dir *dir, uint32_t virtual)
 {
   if (virtual != PAGE_ALIGN(virtual))
-    log_warn("Virtual MM: Virtual addr = 0x%x, not page aligned\n", virtual);
+    serial_early_kprintf("Virtual MM: Virtual addr = 0x%x, not page aligned\n", virtual);
 
   if (!PAGE_IS_ENABLED(dir->entries[PAGE_DIR_INDEX(virtual)]))
     return;
@@ -153,7 +153,7 @@ void virt_mm_map(struct page_dir *dir, uint32_t physical, uint32_t virtual)
   virt_mm_flag_set(entry, PAGE_DIR_PRESENT | PAGE_DIR_WRITABLE);
   virt_mm_frame_set(entry, phys_tbl);
 
-  log_info("Virtual MM: Mapped dir = 0x%x, tbl = 0x%x, physical = 0x%x, virtual = 0x%x\n", dir, tbl, physical, virtual);
+  serial_early_kprintf("Virtual MM: Mapped dir = 0x%x, tbl = 0x%x, physical = 0x%x, virtual = 0x%x\n", dir, tbl, physical, virtual);
 }
 
 void virt_mm_init()
@@ -165,11 +165,11 @@ void virt_mm_init()
   virt_mm_map(dir, 0x00000000, 0xC0000000);
 
   dir->entries[PAGE_TBL_ENTRIES - 1] = (phys_dir & PAGE_DIR_BASE) | PAGE_TBL_PRESENT | PAGE_TBL_WRITABLE;
-  log_info("Virtual MM: Recursive page directory enabled\n");
+  serial_early_kprintf("Virtual MM: Recursive page directory enabled\n");
 
   virt_mm_dir = dir;
   page_enable(phys_dir);
-  log_info("Virtual MM: Page enabled, dir = 0x%x\n", phys_dir);
+  serial_early_kprintf("Virtual MM: Page enabled, dir = 0x%x\n", phys_dir);
 
-  log_info("Virtual MM: Initialized\n");
+  serial_early_kprintf("Virtual MM: Initialized\n");
 }

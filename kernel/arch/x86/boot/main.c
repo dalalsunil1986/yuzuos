@@ -31,7 +31,6 @@ void arch_main(uint32_t magic, uint32_t addr)
   sys_cli();
 
   serial_early_init();
-  log_init();
   gdt_init();
   idt_init();
   multiboot_init(magic, addr);

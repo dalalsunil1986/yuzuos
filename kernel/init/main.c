@@ -19,6 +19,7 @@
  */
 void kernel_main()
 {
+  log_init();
   rtc_init();
   vga_init();
   pci_init();

@@ -2,7 +2,7 @@
 #include <kernel/asm/irq.h>
 #include <kernel/asm/io.h>
 #include <kernel/system/sys.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 #include <stdbool.h>
 
 void mouse_write(uint8_t write)
@@ -19,7 +19,7 @@ int mouse_handler(struct itr_registers *registers)
   while ((status & 0x01) && (status & 0x20))
   {
     uint8_t package = inb(0x60);
-    log_info("Mouse: Status = %d, package = %d\n", status, package);
+    serial_early_kprintf("Mouse: Status = %d, package = %d\n", status, package);
     break;
   }
 
@@ -48,5 +48,5 @@ void mouse_init()
 
   irq_handler_set(12, mouse_handler);
 
-  log_info("Mouse: Initialized\n");
+  serial_early_kprintf("Mouse: Initialized\n");
 }

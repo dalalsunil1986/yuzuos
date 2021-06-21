@@ -1,6 +1,6 @@
 #include <kernel/drivers/pit.h>
 #include <kernel/asm/irq.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 
 static volatile uint64_t pit_ticks;
 
@@ -22,5 +22,5 @@ void pit_init()
 {
   pit_ticks = 0;
   irq_handler_set(0, pit_handler);
-  log_info("PIT: Initialized\n");
+  serial_early_kprintf("PIT: Initialized\n");
 }

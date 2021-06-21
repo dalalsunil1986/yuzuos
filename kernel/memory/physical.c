@@ -1,7 +1,7 @@
 #include <kernel/memory/physical.h>
 #include <kernel/memory/virtual.h>
 #include <kernel/boot/multiboot.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 #include <kernel/utils/bitmap.h>
 #include <kernel/utils/math.h>
 #include <kernel/utils/string.h>
@@ -77,7 +77,7 @@ void phys_mm_region_set(uint32_t base, uint32_t len)
 
   bitmap_set(phys_mm_bitmap, 0);
 
-  log_info("Physical MM: Region set base = 0x%x, len = 0x%x\n", base, len);
+  serial_early_kprintf("Physical MM: Region set base = 0x%x, len = 0x%x\n", base, len);
 }
 
 void phys_mm_region_unset(uint32_t base, uint32_t len)
@@ -91,7 +91,7 @@ void phys_mm_region_unset(uint32_t base, uint32_t len)
     phys_mm_bitmap_used++;
   }
 
-  log_info("Physical MM: Region unset base = 0x%x, len = 0x%x\n", base, len);
+  serial_early_kprintf("Physical MM: Region unset base = 0x%x, len = 0x%x\n", base, len);
 }
 
 void phys_mm_init()
@@ -113,7 +113,7 @@ void phys_mm_init()
   phys_mm_region_unset(0x0, 0x100000);
   phys_mm_region_unset(0x100000, kernel_size + bitmap_size);
 
-  log_info("Physical MM: Kernel start = 0x%x, end = 0x%x, size = 0x%x\n", &kernel_start, &kernel_end, kernel_size);
-  log_info("Physical MM: Bitmap addr = 0x%x, max = %d, used = %d\n", phys_mm_bitmap, phys_mm_bitmap_max, phys_mm_bitmap_used);
-  log_info("Physical MM: Initialized\n");
+  serial_early_kprintf("Physical MM: Kernel start = 0x%x, end = 0x%x, size = 0x%x\n", &kernel_start, &kernel_end, kernel_size);
+  serial_early_kprintf("Physical MM: Bitmap addr = 0x%x, max = %d, used = %d\n", phys_mm_bitmap, phys_mm_bitmap_max, phys_mm_bitmap_used);
+  serial_early_kprintf("Physical MM: Initialized\n");
 }
