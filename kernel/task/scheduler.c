@@ -422,7 +422,7 @@ int sched_process_execve(const char *path, char *const argv[], char *const envp[
     memcpy(new_envp[i], envp[i], len);
   }
 
-  free(sched_process->name);
+  free((void *)sched_process->name);
   sched_process->name = strdup(path);
 
   char *p_path = strdup(path);
