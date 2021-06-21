@@ -1,5 +1,5 @@
 #include <kernel/memory/gdt.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 #include <kernel/task/tss.h>
 
 static struct gdt_entry gdt_entries[GDT_ENTRIES];
@@ -33,5 +33,5 @@ void gdt_init()
   gdt_flush((uint32_t)&gdt);
   tss_flush();
 
-  log_info("GDT: Initialized\n");
+  serial_early_kprintf("GDT: Initialized\n");
 }
