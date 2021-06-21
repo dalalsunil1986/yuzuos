@@ -1,7 +1,7 @@
 #include <kernel/drivers/rtc.h>
 #include <kernel/interrupts/irq.h>
 #include <kernel/utils/log.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 
 static volatile uint64_t rtc_ticks;
 

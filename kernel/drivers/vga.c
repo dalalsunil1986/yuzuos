@@ -1,5 +1,5 @@
 #include <kernel/drivers/vga.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 #include <kernel/utils/log.h>
 #include <kernel/memory/virtual.h>
 #include <stddef.h>

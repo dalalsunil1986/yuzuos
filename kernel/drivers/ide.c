@@ -1,6 +1,6 @@
 #include <kernel/drivers/ide.h>
 #include <kernel/interrupts/irq.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>

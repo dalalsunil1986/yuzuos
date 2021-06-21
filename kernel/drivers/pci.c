@@ -1,7 +1,7 @@
 #include <kernel/drivers/pci.h>
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdlib.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 
 static struct dlist_head pci_list;
 

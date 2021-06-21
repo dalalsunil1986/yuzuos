@@ -1,6 +1,6 @@
 #include <kernel/drivers/mouse.h>
 #include <kernel/interrupts/irq.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 #include <kernel/system/sys.h>
 #include <kernel/utils/log.h>
 #include <stdbool.h>

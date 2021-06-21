@@ -1,6 +1,6 @@
 #include <kernel/drivers/keyboard.h>
 #include <kernel/interrupts/irq.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 #include <kernel/utils/log.h>
 
 int keyboard_handler(struct itr_registers *registers)

@@ -1,6 +1,6 @@
 #include <kernel/utils/log.h>
 #include <kernel/utils/stdio.h>
-#include <kernel/system/io.h>
+#include <kernel/asm/io.h>
 #include <kernel/task/scheduler.h>
 
 static const char *log_type_msg[] = {
