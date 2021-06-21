@@ -19,13 +19,13 @@ sched_jump_usermode:
 	movl 8(%esp), %ebx
 
 	push $0x23
-	push %eax
+	pushl %eax
 	pushf
 
 	popl %eax
 	or $0x200, %eax
-	push %eax
+	pushl %eax
 
   push $0x1B
-	push %ebx
+	pushl %ebx
 	iret
