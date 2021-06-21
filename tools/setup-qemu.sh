@@ -1,9 +1,13 @@
 #!/bin/bash -e
 
-TOOLS_DIR=$(pwd)/tools
-CROSS_DIR=$TOOLS_DIR/cross
-BUILD_DIR=$TOOLS_DIR/build
-CACHE_DIR=$TOOLS_DIR/cache
+fail() {
+  echo "FAILED: $*"
+  exit 1
+}
+
+[ -z "$BUILD_DIR" ] && fail "BUILD_DIR is not set"
+[ -z "$CACHE_DIR" ] && fail "CACHE_DIR is not set"
+[ -z "$CROSS_DIR" ] && fail "CROSS_DIR is not set"
 
 CORES=$(nproc)
 MIRROR=https://download.qemu.org
@@ -11,15 +15,6 @@ MIRROR=https://download.qemu.org
 QEMU_VERSION=6.0.0
 QEMU_PACKAGE=qemu-$QEMU_VERSION
 QEMU=$QEMU_PACKAGE.tar.xz
-
-function cleanup {
-  echo "Removing $BUILD_DIR/$QEMU_PACKAGE"
-  rm -rf $BUILD_DIR/$QEMU_PACKAGE
-}
-
-trap cleanup EXIT
-
-mkdir -pv $BUILD_DIR $CACHE_DIR $CROSS_DIR
 
 cd $CACHE_DIR
 wget -nc $MIRROR/$QEMU
