@@ -1,6 +1,6 @@
 #include <kernel/task/tss.h>
 #include <kernel/memory/gdt.h>
-#include <kernel/utils/log.h>
+#include <kernel/boot/serial.h>
 
 static struct tss_entry tss;
 
@@ -23,5 +23,5 @@ void tss_init(uint32_t index, uint32_t ss, uint32_t esp)
   tss.gs = 0x13;
   tss.iomap = sizeof(struct tss_entry);
 
-  log_info("TSS: Initialized\n");
+  serial_early_kprintf("TSS: Initialized\n");
 }
