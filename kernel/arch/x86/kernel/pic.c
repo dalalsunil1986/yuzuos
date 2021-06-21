@@ -1,5 +1,11 @@
-#include <kernel/interrupts/pic.h>
-#include <kernel/system/io.h>
+/**
+ * @file kernel/arch/x86/kernel/pic.c
+ * @brief  8259 Programmable Interrupt Controller code
+ * @author Saullo Bretas Silva
+ */
+
+#include <kernel/asm/pic.h>
+#include <kernel/asm/io.h>
 
 void pic_remap(int offset1, int offset2)
 {
@@ -66,22 +72,4 @@ void pic_eoi(uint8_t irq)
     outb(PIC2_COMMAND, PIC_EOI);
 
   outb(PIC1_COMMAND, PIC_EOI);
-}
-
-uint16_t pic_irq_get(int ocw3)
-{
-  outb(PIC1_COMMAND, ocw3);
-  outb(PIC2_COMMAND, ocw3);
-
-  return (inb(PIC2_COMMAND) << 8) | inb(PIC1_COMMAND);
-}
-
-uint16_t pic_irr_get(void)
-{
-  return pic_irq_get(PIC_READ_IRR);
-}
-
-uint16_t pic_isr_get(void)
-{
-  return pic_irq_get(PIC_READ_ISR);
 }

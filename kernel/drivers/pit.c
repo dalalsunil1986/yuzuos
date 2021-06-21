@@ -1,6 +1,5 @@
 #include <kernel/drivers/pit.h>
 #include <kernel/interrupts/irq.h>
-#include <kernel/interrupts/pic.h>
 #include <kernel/utils/log.h>
 
 static volatile uint64_t pit_ticks;
