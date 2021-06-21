@@ -52,6 +52,16 @@ function(yuzuos_lib lib_name bin_name)
   target_include_directories(${lib_name} PUBLIC include)
 endfunction()
 
+function(yuzuos_libc lib_name bin_name)
+  yuzuos_install_headers("")
+  add_library(${lib_name} ${SOURCES})
+  install(TARGETS ${lib_name} DESTINATION usr/lib)
+  set_target_properties(${lib_name} PROPERTIES OUTPUT_NAME ${bin_name})
+  target_link_directories(${lib_name} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+  target_link_libraries(${lib_name} libcore)
+  target_include_directories(${lib_name} PUBLIC include)
+endfunction()
+
 add_custom_target(toolchain
   COMMAND ${CMAKE_COMMAND} -E env "TARGET=${TOOLCHAIN_TARGET}" "PREFIX=${TOOLCHAIN_PREFIX}" 
     "CROSS_DIR=${CROSS_DIR}" "BUILD_DIR=${BUILD_DIR}" "CACHE_DIR=${CACHE_DIR}"
