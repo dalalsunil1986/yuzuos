@@ -13,6 +13,7 @@ set(CACHE_DIR ${TOOLS_DIR}/cache)
 set(CROSS_DIR ${TOOLS_DIR}/cross)
 
 set(PROCESSOR i686)
+set(ARCH x86)
 
 set(TOOLCHAIN_TARGET ${PROCESSOR}-yuzuos)
 set(TOOLCHAIN_PREFIX ${CROSS_DIR})

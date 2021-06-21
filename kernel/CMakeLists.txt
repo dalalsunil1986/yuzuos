@@ -1,6 +1,4 @@
 set(ASM_SOURCES
-  boot/boot.S
-  
   memory/gdt_flush.S
   memory/page_enable.S
   memory/tbl_flush_entry.S
@@ -15,7 +13,7 @@ set(ASM_SOURCES
   task/sched_return_usermode.S)
 
 set(C_SOURCES
-  init.c
+  init/main.c
   
   utils/log.c
   utils/stdio.c
@@ -35,8 +33,6 @@ set(C_SOURCES
   interrupts/irq.c
   interrupts/isr.c
   
-  boot/multiboot.c
-  
   system/sys.c
   system/syscall.c
   
@@ -55,12 +51,15 @@ set(C_SOURCES
   task/tss.c
   task/elf32.c)
 
-set(SOURCES ${ASM_SOURCES} ${C_SOURCES})
+add_subdirectory(arch)
+
+set(SOURCES ${ASM_SOURCES} ${C_SOURCES} ${ARCH_SOURCES})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffreestanding -O2 -nostdlib")
 
-add_link_options(LINKER: -T ${CMAKE_CURRENT_SOURCE_DIR}/boot/linker.ld)
 add_executable(kernel ${SOURCES})
 target_link_libraries(kernel gcc)
+target_include_directories(kernel PRIVATE include arch/${ARCH}/include)
+target_link_options(kernel PRIVATE LINKER: -T ${CMAKE_CURRENT_SOURCE_DIR}/arch/${ARCH}/linker.ld)
 install(TARGETS kernel RUNTIME DESTINATION boot)
 yuzuos_install_headers("ukernel")

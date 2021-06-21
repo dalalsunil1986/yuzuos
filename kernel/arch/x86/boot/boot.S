@@ -78,7 +78,7 @@ higher_half:
 	pushl %ebx
 	pushl %eax
 
-	call kernel_init
+	call arch_main
  
 	cli
 
